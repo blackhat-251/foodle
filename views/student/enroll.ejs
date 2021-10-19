@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<h1>Hello <%= user.name %>, your role is <%= user.role %>
+</h1>
+
+<p>Enroll in Assignments</p>
+<form action="/student/enroll" method="POST">
+    <label for="assignment">Assignment Code</label>
+    <input type="text" placeholder="XXX" name="assign">
+    <button>Enroll</button>
+</form>

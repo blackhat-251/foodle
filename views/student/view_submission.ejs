@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<h1>Hello <%= user.name %>, your role is <%= user.role %>
+</h1>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <h2>My submissions</h2>
+    <% if(files) { %>
+        <% files.forEach(function(file) {%>
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="card-title">
+                        <%= file.filename %> submitted for <%= file.assigncode %>
+                </div>
+            </div>
+            <div class="card-body">
+                <a href="/download/<%= file.filename %>" download>download submission</a>
+
+            </div>
+        </div>
+        <%}) %>
+        <% } else { %>
+        <p>No files to show</p>
+        <% } %>
+
+</body>
+
