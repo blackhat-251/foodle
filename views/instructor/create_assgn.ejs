@@ -1,6 +1,7 @@
 
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %></h1>
+<!-- <h1>Hello <%= user.name %>, your role is <%= user.role %></h1> -->
+<%- include("../home.ejs") %>
 <h2>create assignment</h2>
 <form action="/instructor/create_assignment" method="post" >
     <label for="title">Title</label>
