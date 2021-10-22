@@ -1,5 +1,6 @@
 var express = require("express");
 var zipstream = require('zip-stream');
+var csv_creator = require('../services/submit-csv')
 var router = express.Router();
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -119,32 +120,32 @@ router.get("/download/:id", async (req, res) => {
 });
 
 router.get("/download_all/:code", async (req, res) => {
-  const files_data = await FileData.find({assigncode: req.params.code});
+  const files_data = await FileData.find({ assigncode: req.params.code });
 
-  cb = function(){};
+  cb = function () { };
   res.header('Content-Type', 'application/zip');
   res.header("Content-Disposition", `attachment; filename="${req.params.code}-submissions.zip"`);
-  var zip = zipstream({level: 1});
+  var zip = zipstream({ level: 1 });
   zip.pipe(res); // res is a writable stream
-  
-  
-  var addFile = function(file, cb) {
+
+  csv_data = csv_creator(files_data)
+  console.log(csv_data)
+  var addFile = function (file, cb) {
     zip.entry(file.content, { name: file.name }, cb);
   };
-
   var files = []
-  for(const file_data of files_data)
-  {
-    const file = await FileChunk.findOne({id: file_data._id})
-    files.push({content: Buffer.from(file.content, "base64"), name: file_data.username+'-'+file_data.filename})
+  for (const file_data of files_data) {
+    const file = await FileChunk.findOne({ id: file_data._id })
+    files.push({ content: Buffer.from(file.content, "base64"), name: file_data.username + '-' + file_data.filename })
   }
+  files.push({ content: csv_data, name: `grading-${req.params.code}.csv` })
 
-  asynci.forEachSeries(files, addFile, function(err) {
+  asynci.forEachSeries(files, addFile, function (err) {
     if (err) return cb(err);
     zip.finalize();
     cb(null, zip.getBytesWritten());
   });
-  
+
 })
 
 router.post("/editprofile", async (req, res) => {
