@@ -1,13 +1,14 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-require('dotenv').config()
-var jwt_verify = require('./middleware/jwt')
-var indexRouter = require('./routes/index');
-var studentRouter = require('./routes/student');
-var instructorRouter = require('./routes/instructor');
+var createError = require("http-errors");
+var express = require("express");
+var path = require("path");
+var cookieParser = require("cookie-parser");
+var logger = require("morgan");
+require("dotenv").config();
+var jwt_verify = require("./middleware/jwt");
+var indexRouter = require("./routes/index");
+var studentRouter = require("./routes/student");
+var instructorRouter = require("./routes/instructor");
+var flash = require('connect-flash');
 const upload = require("express-fileupload");
 var app = express();
 
@@ -20,8 +21,19 @@ app.use(express.json());
 app.use(upload());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(jwt_verify)
+app.use(express.static(path.join(__dirname, "public")));
+app.use(jwt_verify);
+app.use(require("express-session")({
+  secret:"The milk would do that",
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(flash());
+app.use(function(req, res, next){
+  res.locals.message = req.flash();
+  next();
+});
+
 
 app.use('/', indexRouter);
 app.use('/student', studentRouter)

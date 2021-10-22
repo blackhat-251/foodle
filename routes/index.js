@@ -11,24 +11,26 @@ const FileData = require('../models/file_data')
 mongoose.connect(uri)
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  res.redirect('login')
-})
+router.get("/", function (req, res, next) {
+  res.redirect("login");
+});
 
-router.all('/login', async (req, res) => {
-  if (req.method == 'GET') {
-    return res.render('login')
-  } else if (req.method == 'POST') {
-    const username = req.body.username
-    const password = req.body.password
-    if (!username || typeof username !== 'string') {
-      return res.send('Empty username')
+router.all("/login", async (req, res) => {
+  if (req.method == "GET") {
+    return res.render("login");
+  } else if (req.method == "POST") {
+    const username = req.body.username;
+    const password = req.body.password;
+    if (!username || typeof username !== "string") {
+      req.flash("error", "Empty username")
+      return res.redirect("/login");
     }
 
     const user = await User.findOne({ username }).lean()
 
     if (!user) {
-      return res.send('No such user exists')
+      req.flash("error", "No such user exists")
+      return res.redirect("/login");
     }
 
     if (await bcrypt.compare(password, user.password)) {
@@ -49,24 +51,26 @@ router.all('/login', async (req, res) => {
       if (user.role == 'instructor') return res.redirect('/instructor/profile')
       return res.redirect('/student/profile')
     } else {
-      return res.send('Invalid credentials')
+      req.flash("error", "Invalid credentials")
+      return res.redirect("/login");
     }
   } else {
     return res.status(405).send('Method not allowed')
   }
-})
+});
 
-router.all('/register', async (req, res) => {
-  if (req.method == 'GET') {
-    return res.render('reg')
-  } else if (req.method == 'POST') {
-    const email = req.body.email
-    const username = req.body.username
-    const password = await bcrypt.hash(req.body.password, 10)
-    const name = req.body.name
-    const role = req.body.role
-    if (!username || typeof username !== 'string') {
-      return res.send('Empty username')
+router.all("/register", async (req, res) => {
+  if (req.method == "GET") {
+    return res.render("reg");
+  } else if (req.method == "POST") {
+    const email = req.body.email;
+    const username = req.body.username;
+    const password = await bcrypt.hash(req.body.password, 10);
+    const name = req.body.name;
+    const role = req.body.role;
+    if (!username || typeof username !== "string") {
+      req.flash("error", "Empty username")
+      return res.redirect("/register");
     }
     try {
       var user = new User()
@@ -76,13 +80,15 @@ router.all('/register', async (req, res) => {
       user.email = email
       user.name = name
       await user.save((e, u) => {
-        console.log(e, u)
-      })
-      console.log('User created successfully ')
-      return res.redirect('/login')
+        console.log(e, u);
+      });
+      console.log("User created successfully ");
+      req.flash("success", "User created successfully")
+      return res.redirect("/login");
     } catch (error) {
       if (error.code === 11000) {
-        return res.send('Username already exists')
+        req.flash("error", "Username already exists")
+        return res.redirect("/register");
       }
     }
   } else {
@@ -92,7 +98,55 @@ router.all('/register', async (req, res) => {
 
 router.post('/update_password', async (req, res) => {
   if (!(await bcrypt.compare(req.body.old_pwd, req.user.password))) {
-    return res.send('Your current password didnt match')
+    req.flash("error", "Your current password didnt match")
+    return res.redirect("/update_password");
+  }
+  const password = await bcrypt.hash(req.body.new_pwd, 10);
+  if ((await bcrypt.compare(req.body.old_pwd, password))){
+    req.flash("error","New password same as old")
+    return res.redirect("/update_password");
+  }
+
+  req.user.password = password;
+  await req.user.save();
+  req.flash("success","Password changed successfully")
+  return res.redirect("/update_password");
+});
+
+router.get("/update_password", (req, res) => {
+  return res.render("update_password");
+});
+
+router.get("/logout", (req, res) => {
+  res.clearCookie("jwt");
+  return res.redirect("/");
+});
+
+router.get("/download/:id", async (req, res) => {
+  const file = await FileChunk.findOne({ id: req.params.id });
+  const filedata = await FileData.findOne({ _id: req.params.id });
+  res.set("Content-Disposition", `attachment; filename="${filedata.filename}"`);
+  res.send(Buffer.from(file.content, "base64"));
+});
+
+router.get("/download_all/:code", async (req, res) => {
+  const files_data = await FileData.find({ assigncode: req.params.code });
+
+  cb = function () { };
+  res.header('Content-Type', 'application/zip');
+  res.header("Content-Disposition", `attachment; filename="${req.params.code}-submissions.zip"`);
+  var zip = zipstream({ level: 1 });
+  zip.pipe(res); // res is a writable stream
+
+  csv_data = csv_creator(files_data)
+  console.log(csv_data)
+  var addFile = function (file, cb) {
+    zip.entry(file.content, { name: file.name }, cb);
+  };
+  var files = []
+  for (const file_data of files_data) {
+    const file = await FileChunk.findOne({ id: file_data._id })
+    files.push({ content: Buffer.from(file.content, "base64"), name: file_data.username + '-' + file_data.filename })
   }
   const password = await bcrypt.hash(req.body.new_pwd, 10)
   P
