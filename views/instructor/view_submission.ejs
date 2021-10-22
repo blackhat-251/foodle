@@ -5,31 +5,32 @@
 <h2>
     <%= assignment.title %>
 </h2>
+
 <body>
-<h2>Submissions </h2>
-<% if(files) { %>
-    <ol>
-        <% files.forEach(function(file) {%>
-            <li>
-                </br>
-                <%= file.filename %>
+    <h2>Submissions </h2>
+    <% if(files) { %>
+        <ol>
+            <% files.forEach(function(file) {%>
+                <li>
                     </br>
-                    Submitted by: <%= file.username %>
-                        </br> download link:
-                        <a href="/download/<%= file._id %>" download>
-                            <%= file.filename %>
-                        </a>
-                    </br>
-                    Last given feedback: <%= file.feedback %> </br>at time <%= file.updatedAt %>
-                        <form action="/instructor/feedback/<%= file._id %>" method="post" >
-                            <label for="title">Feedback</label>
-                            <input type="text" name="feedback">
-                            <input type="submit" value="Submit">            
-                        </form>
-            </li>
-            <% }) %>
-    </ol>
-    <% } else { %>
-        <p>No files to show</p>
-        <% } %>
+                    <%= file.filename %>
+                        </br>
+                        Submitted by: <%= file.username %>
+                            </br> download link:
+                            <a href="/download/<%= file._id %>" download>
+                                <%= file.filename %>
+                            </a>
+                            </br>
+                            Last given feedback: <%= file.feedback %> </br>at time <%= file.updatedAt %>
+                                    <form action="/instructor/feedback/<%= file._id %>" method="post">
+                                        <label for="title">Feedback</label>
+                                        <input type="text" name="feedback">
+                                        <input type="submit" value="Submit">
+                                    </form>
+                </li>
+                <% }) %>
+        </ol>
+        <% } else { %>
+            <p>No files to show</p>
+            <% } %>
 </body>

@@ -15,38 +15,40 @@
                     </br>
                     description: <%= assignment.description%>
                         </br>
-                    instructor:    <%= assignment.author%>
-                    </br>
-                    Assignment CreatedAt: <%= assignment.createdAt%>
-                            <form action="/upload/<%= assignment.assigncode %>" method="post"
-                                enctype="multipart/form-data">
-                                <div class="custom-file mb-3">
-                                    <input type="file" name="file" id="file1">
-                                    <label for="file1" id="file-label"><small>Choose file</small></label>
-                                </div>
-                                <input type="submit" id="submit-button" value="Submit">
-                            </form>
-                            <% if(files) { %>
-                                <ul>
-                                    <% files.forEach(function(file) {%>
-                                        <% if (file.assigncode==assignment.assigncode) { %>
-                                        <li> Your Last Submission:
-                                            <%= file.filename %>
-                                                <a href="/download/<%= file._id %>" download> download submission</a></li>
-                                           <li>
-                                               feedback: 
-                                            <% if(file.feedback=="") { %>
-                                            No feedback recieved
-                                            <% } else { %>
-                                                <%= file.feedback %>
-                                            <% } %>
+                        instructor: <%= assignment.author%>
+                            </br>
+                            Assignment CreatedAt: <%= assignment.createdAt%>
+                                <form action="/upload/<%= assignment.assigncode %>" method="post"
+                                    enctype="multipart/form-data">
+                                    <div class="custom-file mb-3">
+                                        <input type="file" name="file" id="file1">
+                                        <label for="file1" id="file-label"><small>Choose file</small></label>
+                                    </div>
+                                    <input type="submit" id="submit-button" value="Submit">
+                                </form>
+                                <% if(files) { %>
+                                    <ul>
+                                        <% files.forEach(function(file) {%>
+                                            <% if (file.assigncode==assignment.assigncode) { %>
+                                                <li> Your Last Submission:
+                                                    <%= file.filename %>
+                                                        <a href="/download/<%= file._id %>" download> download
+                                                            submission</a>
+                                                </li>
+                                                <li>
+                                                    feedback:
+                                                    <% if(file.feedback=="" ) { %>
+                                                        No feedback recieved
+                                                        <% } else { %>
+                                                            <%= file.feedback %>
+                                                                <% } %>
 
-                                                <% } %>
-                                                    <%}) %>
-                                </ul>
-                                <% } else { %>
-                                    <p>No files to show</p>
-                                    <% } %>
+                                                                    <% } %>
+                                                                        <%}) %>
+                                    </ul>
+                                    <% } else { %>
+                                        <p>No files to show</p>
+                                        <% } %>
             </li>
             <% }) %>
     </ul>
