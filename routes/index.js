@@ -82,17 +82,27 @@ router.all("/register", async (req, res) => {
       user.role = role;
       user.email = email;
       user.name = name;
-      await user.save((e, u) => {
-        console.log(e, u);
+      await user.save((err, result) => {
+        if (err) {
+          console.log(err);
+          if (err.code === 11000) {
+            req.flash("error", "Username already exists")
+            return res.redirect("/register");
+          }
+        }
+        else {
+          req.flash("success", "User created successfully")
+          return res.redirect("/login");
+        }
       });
       console.log("User created successfully ");
-      req.flash("success", "User created successfully")
-      return res.redirect("/login");
+
     } catch (error) {
-      if (error.code === 11000) {
-        req.flash("error", "Username already exists")
-        return res.redirect("/register");
-      }
+      // if (error.code === 11000) {
+      //   req.flash("error", "Username already exists")
+      //   return res.redirect("/register");
+      // }
+      console.log(error)
     }
   } else {
     return res.status(405).send("Method not allowed");
@@ -105,14 +115,14 @@ router.post("/update_password", async (req, res) => {
     return res.redirect("/update_password");
   }
   const password = await bcrypt.hash(req.body.new_pwd, 10);
-  if ((await bcrypt.compare(req.body.old_pwd, password))){
-    req.flash("error","New password same as old")
+  if ((await bcrypt.compare(req.body.old_pwd, password))) {
+    req.flash("error", "New password same as old")
     return res.redirect("/update_password");
   }
 
   req.user.password = password;
   await req.user.save();
-  req.flash("success","Password changed successfully")
+  req.flash("success", "Password changed successfully")
   return res.redirect("/update_password");
 });
 
