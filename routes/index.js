@@ -25,13 +25,15 @@ router.all("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     if (!username || typeof username !== "string") {
-      return res.send("Empty username");
+      req.flash("error", "Empty username")
+      return res.redirect("/login");
     }
 
     const user = await User.findOne({ username }).lean();
 
     if (!user) {
-      return res.send("No such user exists");
+      req.flash("error", "No such user exists")
+      return res.redirect("/login");
     }
 
     if (await bcrypt.compare(password, user.password)) {
@@ -52,7 +54,8 @@ router.all("/login", async (req, res) => {
       if (user.role == "instructor") return res.redirect("/instructor/profile");
       return res.redirect("/student/profile");
     } else {
-      return res.send("Invalid credentials");
+      req.flash("error", "Invalid credentials")
+      return res.redirect("/login");
     }
   } else {
     return res.status(405).send("Method not allowed");
@@ -69,7 +72,8 @@ router.all("/register", async (req, res) => {
     const name = req.body.name;
     const role = req.body.role;
     if (!username || typeof username !== "string") {
-      return res.send("Empty username");
+      req.flash("error", "Empty username")
+      return res.redirect("/register");
     }
     try {
       var user = new User();
@@ -82,10 +86,12 @@ router.all("/register", async (req, res) => {
         console.log(e, u);
       });
       console.log("User created successfully ");
+      req.flash("success", "User created successfully")
       return res.redirect("/login");
     } catch (error) {
       if (error.code === 11000) {
-        return res.send("Username already exists");
+        req.flash("error", "Username already exists")
+        return res.redirect("/register");
       }
     }
   } else {
@@ -95,12 +101,19 @@ router.all("/register", async (req, res) => {
 
 router.post("/update_password", async (req, res) => {
   if (!(await bcrypt.compare(req.body.old_pwd, req.user.password))) {
-    return res.send("Your current password didnt match");
+    req.flash("error", "Your current password didnt match")
+    return res.redirect("/update_password");
   }
   const password = await bcrypt.hash(req.body.new_pwd, 10);
+  if ((await bcrypt.compare(req.body.old_pwd, password))){
+    req.flash("error","New password same as old")
+    return res.redirect("/update_password");
+  }
+
   req.user.password = password;
   await req.user.save();
-  return res.send("Password changed successfully");
+  req.flash("success","Password changed successfully")
+  return res.redirect("/update_password");
 });
 
 router.get("/update_password", (req, res) => {

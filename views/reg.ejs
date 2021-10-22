@@ -1,7 +1,14 @@
 <h1>
     Registration page
 </h1>
+<% if(message) {%>
+    <h4><%= message.error %></h4>
+    <h4><%= message.success %></h4>
+<% }%>
+</br>
+</br>
 <form action="/register" method="POST">
+    
     <label for="username">UserName</label>
     <input type="text" id="username" name="username">
     </br>
