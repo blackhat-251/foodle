@@ -17,16 +17,10 @@ router.get("/", (req, res) => {
   res.redirect("/instructor/profile");
 });
 router.get("/profile", (req, res) => {
-  if (req.user.role === "instructor")
-    return res.render("instructor/profile", { user: req.user });
-  else return res.send("unauthorized access");
+  return res.render("instructor/profile", { user: req.user });
 });
 
 router.all("/create_assignment", async (req, res) => {
-  if (req.user.role != "instructor") {
-    return res.send("Unauthorized access");
-  }
-
   if (req.method == "GET") {
     return res.render("instructor/create_assgn", { user: req.user });
   }
@@ -50,31 +44,24 @@ router.all("/create_assignment", async (req, res) => {
 });
 
 router.get("/assignment", async (req, res) => {
-  if (req.user.role == "instructor") {
-    var assigncodes = req.user.assignments;
-    if (!assigncodes) {
-      return res.redirect("/instructor/create_assignment");
-    }
-    var assignments = [];
-    for (var i = 0; i < assigncodes.length; i++) {
-      var assgn = await Assign.findOne({ assigncode: assigncodes[i] });
-      assignments.push(assgn);
-    }
-
-    return res.render("instructor/assignment", {
-      a: assignments,
-      user: req.user,
-    });
-  } else {
-    return res.send("Unauthorized access");
+  var assigncodes = req.user.assignments;
+  if (!assigncodes) {
+    return res.redirect("/instructor/create_assignment");
   }
+  var assignments = [];
+  for (var i = 0; i < assigncodes.length; i++) {
+    var assgn = await Assign.findOne({ assigncode: assigncodes[i] });
+    assignments.push(assgn);
+  }
+
+  return res.render("instructor/assignment", {
+    a: assignments,
+    user: req.user,
+  });
 });
 
 router.get("/view_submission/:code", async (req, res) => {
-  if (
-    req.user.role != "instructor" ||
-    !req.user.assignments.includes(req.params.code)
-  ) {
+  if (!req.user.assignments.includes(req.params.code)) {
     return res.send("User Not Authorized");
   }
   const f = await FileData.find({ assigncode: req.params.code });
@@ -88,9 +75,6 @@ router.get("/view_submission/:code", async (req, res) => {
 });
 
 router.post("/feedback/:id", async (req, res) => {
-  if (req.user.role != "instructor") {
-    return res.send("User Not Authorized");
-  }
   const id = req.params.id;
   const feedback = req.body.feedback;
   const f = await FileData.findOne({ _id: id });
@@ -100,10 +84,7 @@ router.post("/feedback/:id", async (req, res) => {
 });
 
 router.get("/inviteall/:code", async (req, res) => {
-  if (
-    req.user.role != "instructor" ||
-    !req.user.assignments.includes(req.params.code)
-  ) {
+  if (!req.user.assignments.includes(req.params.code)) {
     return res.send("User Not Authorized");
   }
   const students = await User.find({ role: "student" });

@@ -27,6 +27,15 @@ async function jwt_verify(req, res, next) {
     console.log(e);
     return res.redirect("/login");
   }
+  //console.log(req.user)
+  if(req.path.includes("/student") && req.user.role==='instructor')
+  {
+    return res.send("Unauthorized access")
+  }
+  if(req.path.includes("/instructor") && req.user.role==='student')
+  {
+    return res.send("Unauthorized access")
+  }
   return next();
 }
 

@@ -131,7 +131,8 @@ router.get("/update_password", (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  res.clearCookie("jwt");
+  res.clearCookie('jwt');
+  res.clearCookie('connect.sid');
   return res.redirect("/");
 });
 
@@ -143,6 +144,10 @@ router.get("/download/:id", async (req, res) => {
 });
 
 router.get("/download_all/:code", async (req, res) => {
+  if(req.user.role!='instructor' || !req.user.assignments.includes(req.params.code))
+  {
+    res.send("unauthorised access")
+  }
   const files_data = await FileData.find({ assigncode: req.params.code });
 
   cb = function () { };
@@ -177,7 +182,8 @@ router.post("/editprofile", async (req, res) => {
   req.user.name = newname;
   req.user.email = newmail;
   await req.user.save();
-  return res.send("profile updated successfully");
+  req.flash("success", "Profile edited successfully")
+  return res.redirect("/editprofile");
 });
 
 router.get("/editprofile", (req, res) => {

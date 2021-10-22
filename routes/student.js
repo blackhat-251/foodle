@@ -13,9 +13,7 @@ router.get("/", (req, res) => {
   res.redirect("/student/profile");
 });
 router.get("/profile", (req, res) => {
-  if (req.user.role === "student")
     return res.render("student/profile", { user: req.user });
-  else return res.send("unauthorized access");
 });
 
 router.get("/view_submission", async (req, res) => {
