@@ -22,17 +22,17 @@ app.use(upload());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(jwt_verify);
 app.use(require("express-session")({
-  secret:"The milk would do that",
-  resave: false,
-  saveUninitialized: false
+  secret: "secret",
+  resave: true,
+  saveUninitialized: true
 }));
 app.use(flash());
-app.use(function(req, res, next){
+app.use(function (req, res, next) {
   res.locals.message = req.flash();
   next();
 });
+app.use(jwt_verify);
 
 
 app.use("/", indexRouter);
