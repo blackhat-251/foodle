@@ -7,30 +7,41 @@
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
     "serverstart": "DEBUG=file_transfer:* npm run devstart",
+    "pretty": "prettier --write \"./**/*.{js,jsx,json,ejs,html}\"",
     "//": "npm run serverstart"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
+    "csv-stringify": "^5.6.5",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "~4.16.1",
     "express-fileupload": "^1.2.1",
     "express-session": "^1.17.2",
+    "express-zip": "^3.0.0",
     "http-errors": "~1.6.3",
     "jade": "^0.29.0",
     "jsonwebtoken": "^8.5.1",
+    "lint": "^0.7.0",
     "mathjs": "^9.5.1",
     "mongoose": "^6.0.10",
     "morgan": "~1.9.1",
     "multer": "^1.4.3",
     "multer-gridfs-storage": "^5.0.2",
+    "node-csv": "^0.1.2",
     "nodemailer": "^6.7.0",
     "nodemon": "^2.0.13",
-    "pug": "^3.0.2"
+    "prettier": "^2.4.1",
+    "pug": "^3.0.2",
+    "zip-stream": "^4.1.0"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "standard": "^16.0.4"
+  }
 }

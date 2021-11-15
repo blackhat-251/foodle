@@ -1,12 +1,12 @@
-
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %></h1>
+<h1>Hello <%= user.name %>, your role is <%= user.role %>
+</h1>
 <h2>create assignment</h2>
-<form action="/instructor/create_assignment" method="post" >
+<form action="/instructor/create_assignment" method="post">
     <label for="title">Title</label>
     <input type="name" name="title">
     <label for="description">Description</label>
     <input type="text" name="description">
     <!-- <input type="file" name="file"> -->
-    <input type="submit" value="Button">            
+    <input type="submit" value="Button">
 </form>

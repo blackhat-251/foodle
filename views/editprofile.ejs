@@ -1,9 +1,13 @@
 <h2>Edit profile</h2>
-
-<form action="/editprofile" method="post" >
+<h1>Hello <%= user %></h1>
+<% if(message) {%>
+    <h4><%= message.error %></h4>
+    <h4><%= message.success %></h4>
+<% }%>
+<form action="/editprofile" method="post">
     <label for="name">New Name</label>
     <input type="text" name="name">
     <label for="email">New Email</label>
     <input type="text" name="email">
-    <input type="submit" value="Submit">            
+    <input type="submit" value="Submit">
 </form>
