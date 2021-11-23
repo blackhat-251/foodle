@@ -7,13 +7,15 @@ const jwt = require("jsonwebtoken");
 const uri = process.env.uri;
 const FileData = require("../models/file_data");
 const Assign = require("../models/assignment");
+const Course = require("../models/course");
+
 
 mongoose.connect(uri);
 router.get("/", (req, res) => {
   res.redirect("/student/profile");
 });
 router.get("/profile", (req, res) => {
-    return res.render("student/profile", { user: req.user });
+  return res.render("student/profile", { user: req.user });
 });
 
 router.get("/view_submission", async (req, res) => {
@@ -32,6 +34,9 @@ router.get("/view_submission", async (req, res) => {
 router.get("/enroll", (req, res) => {
   res.render("student/enroll", { user: req.user });
 });
+router.get("/enroll_course", (req, res) => {
+  res.render("student/enroll_course", { user: req.user });
+});
 
 router.post("/enroll", async (req, res) => {
   const assign_code = req.body.assign;
@@ -48,6 +53,37 @@ router.post("/enroll", async (req, res) => {
   await req.user.save();
   return res.redirect("/student/assignments");
 });
+
+router.post("/enroll_course", async (req, res) => {
+  const course_code = req.body.coursecode;
+  console.log(course_code);
+  const course = await Course.findOne({ coursecode: course_code });
+  console.log(course);
+  if (!course) {
+    req.flash("error", "No such Course Exists")
+    return res.redirect("/student/enroll_course");
+  }
+  if (req.user.courses.includes(course_code)) {
+    req.flash("error", "Already Enrolled")
+    return res.redirect("/student/");
+  }
+  req.user.courses.push(course_code);
+  await req.user.save();
+  course.enrolled_students.push(req.user.username)
+  await course.save()
+  return res.redirect("/student/courses");
+});
+
+router.get("/courses", async (req, res) => {
+  courses = await Course.find()
+  const filtered_course = await courses.filter((ass) => {
+    return req.user.courses.includes(ass.coursecode);
+  });
+  return res.render("student/dashboard", {
+    user: req.user,
+    courses: filtered_course,
+  })
+})
 
 router.get("/enroll/:code", async (req, res) => {
   const assign_code = req.params.code;

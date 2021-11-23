@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<h1>Hello <%= user.name %>, your role is <%= user.role %>
+</h1>
+
+<body>
+    <h2>Enrolled Course</h2>
+    <ul>
+        <% courses.forEach(function(course) { %>
+        <li>  course Name:  <a href="/student/course/<%= course.coursecode %>"> <%= course.name %></a></li>
+        <% }) %>
+    </ul>
+</body>
