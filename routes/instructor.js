@@ -6,6 +6,8 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const FileData = require("../models/file_data");
 const Assign = require("../models/assignment");
+const Course = require("../models/course");
+
 const math = require("mathjs");
 const { identityDependencies } = require("mathjs");
 const uri = process.env.uri;
@@ -41,6 +43,30 @@ router.all("/create_assignment", async (req, res) => {
     return res.send("Some error occured, please try again.");
   }
   res.redirect("/instructor/assignment");
+});
+
+router.all("/create_course", async (req, res) => {
+  if (req.method == "GET") {
+    return res.render("instructor/create_course", { user: req.user });
+  }
+  try {
+    const code = math.randomInt(1000);
+    const response = await Course.create({
+      creator: req.user.username,
+      name: req.body.name,
+      description: req.body.description,
+      coursecode: code,
+    });
+    console.log("Course created ", response);
+    req.user.courses.push(code);
+    await req.user.save();
+  } catch (error) {
+    console.log(error);
+    return res.send("Some error occured, please try again.");
+  }
+  res.redirect("/instructor/");
+  
+  
 });
 
 router.get("/assignment", async (req, res) => {

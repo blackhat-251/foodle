@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<h1>Hello <%= user.name %>, your role is <%= user.role %>
+</h1>
+<h2>create course</h2>
+<form action="/instructor/create_course" method="post">
+    <label for="name">Course Name</label>
+    <input type="name" name="name">
+    <label for="description">Course Description</label>
+    <input type="text" name="description">
+    <input type="submit" value="Button">
+</form>
