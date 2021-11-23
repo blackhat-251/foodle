@@ -22,27 +22,32 @@ router.get("/profile", (req, res) => {
   return res.render("instructor/profile", { user: req.user });
 });
 
-router.all("/create_assignment", async (req, res) => {
+router.all("/create_assignment/:code", async (req, res) => {
   if (req.method == "GET") {
-    return res.render("instructor/create_assgn", { user: req.user });
+    return res.render("instructor/create_assgn", { user: req.user, coursecode: req.params.code});
   }
   try {
-    const code = math.randomInt(1000);
+    const asscode = math.random().toString(36).slice(2).substring(0, 5);
     const response = await Assign.create({
       author: req.user.username,
       title: req.body.title,
       description: req.body.description,
-      assigncode: code,
+      assigncode: asscode,
+      coursecode: req.params.code
     });
     console.log("Assignment created ", response);
 
-    req.user.assignments.push(code);
+    req.user.assignments.push(asscode);
+    var course = await Course.findOne({ coursecode: req.params.code });
+    course.assignments.push(asscode);
+
     await req.user.save();
+    await course.save();
   } catch (error) {
     console.log(error);
     return res.send("Some error occured, please try again.");
   }
-  res.redirect("/instructor/assignment");
+  res.redirect("/instructor/courses");
 });
 
 router.all("/create_course", async (req, res) => {
@@ -50,7 +55,7 @@ router.all("/create_course", async (req, res) => {
     return res.render("instructor/create_course", { user: req.user });
   }
   try {
-    const code = math.randomInt(1000);
+    const code = math.random().toString(36).slice(2).substring(0, 5);
     const response = await Course.create({
       creator: req.user.username,
       name: req.body.name,
@@ -67,6 +72,44 @@ router.all("/create_course", async (req, res) => {
   res.redirect("/instructor/");
   
   
+});
+
+router.get("/courses", async (req, res) => {
+  var coursecodes = req.user.courses;
+  if (!coursecodes) {
+    return res.redirect("/instructor/create_course");
+  }
+  var courses = [];
+  for (var i = 0; i < coursecodes.length; i++) {
+    var course = await Course.findOne({ coursecode: coursecodes[i] });
+    courses.push(course);
+  }
+  console.log(courses);
+
+  return res.render("instructor/courses", {
+    a: courses,
+    user: req.user,
+  });
+});
+
+router.get("/assignments/:code", async (req, res) => {
+  var course = await Course.findOne({ coursecode: req.params.code });
+
+  var assigncodes = course.assignments;
+  if (!assigncodes) {
+    return res.redirect(`/instructor/create_assignment/${req.params.code}`);
+  }
+  var assignments = [];
+  for (var i = 0; i < assigncodes.length; i++) {
+    var assgn = await Assign.findOne({ assigncode: assigncodes[i] });
+    assignments.push(assgn);
+  }
+
+  return res.render("instructor/assignments", {
+    a: assignments,
+    user: req.user,
+    coursecode: req.params.code
+  });
 });
 
 router.get("/assignment", async (req, res) => {

@@ -146,7 +146,7 @@ router.get("/download/:id", async (req, res) => {
 router.get("/download_all/:code", async (req, res) => {
   if(req.user.role!='instructor' || !req.user.assignments.includes(req.params.code))
   {
-    res.send("unauthorised access")
+    return res.send("unauthorised access")
   }
   const files_data = await FileData.find({ assigncode: req.params.code });
 

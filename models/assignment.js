@@ -7,6 +7,7 @@ const AssignSchema = new mongoose.Schema(
     description: { type: String, required: false },
     assigncode: { type: String, required: true, unique: true },
     deadline: { type: String, default: Date },
+    coursecode: {type: String}
   },
   { collection: "assign", timestamps: true }
 );

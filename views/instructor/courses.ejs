@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<h1>Hello <%= user.name %>, your role is <%= user.role %>
+</h1>
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+    <p>COURSES</p>
+
+    <% if(a) { %>
+        <p>INIF</p>
+        <% a.forEach(function(course) {%>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <div class="card-title">
+                        Title = <%= course.name %>
+                        </br>
+                        Description = <%= course.description %>
+                        </br>
+                        Code = <%= course.coursecode %>
+                        </br>
+                        <a href="/instructor/assignments/<%= course.coursecode %>">View all assignments</a>
+                        </br>
+                        <!-- <a href="/instructor/create_assignment/<%= course.coursecode %>">Create Assignments</a> -->
+                    </div>
+                </div>
+            </div>
+            <%}) %>
+                <% } else { %>
+                    <p>No Courses to show</p>
+                    <% } %>
+                    <a href="/instructor/create_course">Create Course</a>
+</body>
