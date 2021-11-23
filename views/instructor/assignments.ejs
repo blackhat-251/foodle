@@ -20,17 +20,27 @@
                                 Code = <%= assign.assigncode %>
                                     </br>
                                     CreatedAt = <%= assign.createdAt %>
-                                        <!-- </br>
+                                        </br>
+                                        Due Deadline = <%= assign.deadline %>
+                                            <!-- </br>
                          ModifiedAt = <%= assign.updatedAt %> -->
-                                        </br>
-                                        <a href="/instructor/view_submission/<%= assign.assigncode %>">View
-                                            submissions</a>
-                                        </br>
-                                        <a href="/download_all/<%= assign.assigncode %>">Download
-                                        all submissions</a>
-                                        </br>
-                                        <a href="/instructor/inviteall/<%= assign.assigncode %>">Invite</a> all students
-                                        for the assignemnts through mail
+                                            </br>
+                                            <a href="/instructor/view_submission/<%= assign.assigncode %>">View
+                                                submissions</a>
+                                            </br>
+                                            <a href="/download_all/<%= assign.assigncode %>">Download
+                                                all submissions</a>
+                                            </br>
+                                            Upload CSV downloaded from above link</br>
+                                            <form action="/uploadcsv/<%= assign.assigncode %>" method="post"
+                                                enctype="multipart/form-data">
+                                                <div class="custom-file mb-3">
+                                                    <input type="file" name="file" id="file1">
+                                                    <label for="file1" id="file-label">Choose file</label>
+                                                </div>
+                                                <input type="submit" id="submit-button" value="Submit">
+                                            </form>
+
                     </div>
                 </div>
             </div>

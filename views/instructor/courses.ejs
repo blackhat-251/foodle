@@ -16,14 +16,18 @@
                 <div class="card-header">
                     <div class="card-title">
                         Title = <%= course.name %>
-                        </br>
-                        Description = <%= course.description %>
-                        </br>
-                        Code = <%= course.coursecode %>
-                        </br>
-                        <a href="/instructor/assignments/<%= course.coursecode %>">View all assignments</a>
-                        </br>
-                        <!-- <a href="/instructor/create_assignment/<%= course.coursecode %>">Create Assignments</a> -->
+                            </br>
+                            Description = <%= course.description %>
+                                </br>
+                                Code = <%= course.coursecode %>
+                                    </br>
+                                    <a href="/instructor/assignments/<%= course.coursecode %>">View all assignments</a>
+                                    </br>
+                                    <a href="/instructor/inviteall/<%= course.coursecode %>">Invite</a> all students
+                                    for the course through mail
+                                    </br>
+                                    <a href="/instructor/announcements/<%= course.coursecode %>">View all announcement</a>
+                                    <!-- <a href="/instructor/create_assignment/<%= course.coursecode %>">Create Assignments</a> -->
                     </div>
                 </div>
             </div>
@@ -31,5 +35,5 @@
                 <% } else { %>
                     <p>No Courses to show</p>
                     <% } %>
-                    <a href="/instructor/create_course">Create Course</a>
+                        <a href="/instructor/create_course">Create Course</a>
 </body>

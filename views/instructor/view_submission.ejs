@@ -21,10 +21,12 @@
                                 <%= file.filename %>
                             </a>
                             </br>
-                            Last given feedback: <%= file.feedback %> </br>at time <%= file.updatedAt %>
+                            Last given feedback: <%= file.feedback %></br> grade: <%= file.grade %> </br>at time <%= file.updatedAt %>
                                     <form action="/instructor/feedback/<%= file._id %>" method="post">
                                         <label for="title">Feedback</label>
                                         <input type="text" name="feedback">
+                                        <label for="title">Grade</label>
+                                        <input type="number" name="grade" min="0" max="100" default="0">
                                         <input type="submit" value="Submit">
                                     </form>
                 </li>

@@ -18,6 +18,8 @@
                         instructor: <%= assignment.author%>
                             </br>
                             Assignment CreatedAt: <%= assignment.createdAt%>
+                        </br>
+                        Due Deadline: <%= assignment.deadline%>
                                 <form action="/upload/<%= assignment.assigncode %>" method="post"
                                     enctype="multipart/form-data">
                                     <div class="custom-file mb-3">
@@ -36,6 +38,15 @@
                                                             submission</a>
                                                 </li>
                                                 <li>
+                                                    grade: 
+                                                    <% if(file.grade) { %>
+                                                        <%= file.grade %>
+                                                        
+                                                        <% } else { %>
+                                                            No Grade recieved
+                                                                <% } %>
+                                                    </li>
+                                                <li>
                                                     feedback:
                                                     <% if(file.feedback=="" ) { %>
                                                         No feedback recieved
@@ -45,6 +56,7 @@
 
                                                                     <% } %>
                                                                         <%}) %>
+                                                
                                     </ul>
                                     <% } else { %>
                                         <p>No files to show</p>

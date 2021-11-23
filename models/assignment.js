@@ -6,7 +6,7 @@ const AssignSchema = new mongoose.Schema(
     title: { type: String, required: true },
     description: { type: String, required: false },
     assigncode: { type: String, required: true, unique: true },
-    deadline: { type: String, default: Date },
+    deadline: { type: Date, default: Date.now },
     coursecode: {type: String}
   },
   { collection: "assign", timestamps: true }

@@ -31,28 +31,28 @@ router.get("/view_submission", async (req, res) => {
   });
 });
 
-router.get("/enroll", (req, res) => {
-  res.render("student/enroll", { user: req.user });
-});
+// router.get("/enroll", (req, res) => {
+//   res.render("student/enroll", { user: req.user });
+// });
 router.get("/enroll_course", (req, res) => {
   res.render("student/enroll_course", { user: req.user });
 });
 
-router.post("/enroll", async (req, res) => {
-  const assign_code = req.body.assign;
-  console.log(assign_code);
-  const assignment = await Assign.findOne({ assigncode: assign_code });
-  console.log(assignment);
-  if (!assignment) {
-    return res.send("No such assignment");
-  }
-  if (req.user.assignments.includes(assign_code)) {
-    return res.send("Already Enrolled");
-  }
-  req.user.assignments.push(assign_code);
-  await req.user.save();
-  return res.redirect("/student/assignments");
-});
+// router.post("/enroll", async (req, res) => {
+//   const assign_code = req.body.assign;
+//   console.log(assign_code);
+//   const assignment = await Assign.findOne({ assigncode: assign_code });
+//   console.log(assignment);
+//   if (!assignment) {
+//     return res.send("No such assignment");
+//   }
+//   if (req.user.assignments.includes(assign_code)) {
+//     return res.send("Already Enrolled");
+//   }
+//   req.user.assignments.push(assign_code);
+//   await req.user.save();
+//   return res.redirect("/student/assignments");
+// });
 
 router.post("/enroll_course", async (req, res) => {
   const course_code = req.body.coursecode;
@@ -85,26 +85,31 @@ router.get("/courses", async (req, res) => {
   })
 })
 
-router.get("/enroll/:code", async (req, res) => {
-  const assign_code = req.params.code;
-  console.log(assign_code);
-  const assignment = await Assign.findOne({ assigncode: assign_code });
-  console.log(assignment);
-  if (!assignment) {
-    return res.send("No such assignment");
+router.get("/enroll/:coursecode", async (req, res) => {
+  const course_code = req.params.coursecode;
+  console.log(course_code);
+  const course = await Course.findOne({ coursecode: course_code });
+  console.log(course);
+  if (!course) {
+    req.flash("error", "No such Course Exists")
+    return res.redirect("/student/enroll_course");
   }
-  if (req.user.assignments.includes(assign_code)) {
-    return res.send("Already Enrolled");
+  if (req.user.courses.includes(course_code)) {
+    req.flash("error", "Already Enrolled")
+    return res.redirect("/student/");
   }
-  req.user.assignments.push(assign_code);
+  req.user.courses.push(course_code);
   await req.user.save();
-  return res.redirect("/student/assignments");
+  course.enrolled_students.push(req.user.username)
+  await course.save()
+  return res.redirect("/student/courses");
 });
 
-router.get("/assignments", async (req, res) => {
+router.get("/assignments/:coursecode", async (req, res) => {
+  const course = await Course.findOne({coursecode: req.params.coursecode})
   const assignment = await Assign.find();
   const filtered_ass = await assignment.filter((ass) => {
-    return req.user.assignments.includes(ass.assigncode);
+    return course.assignments.includes(ass.assigncode);
   });
   const f = await FileData.find({ username: req.user.username });
   res.render("student/assignment", {
@@ -121,5 +126,18 @@ router.post("/assignments", async (req, res) => {
   });
   res.redirect("/student/assignment");
 });
+
+router.get("/announcements/:code", async (req, res) => {
+  var course = await Course.findOne({ coursecode: req.params.code });
+
+  var anncodes = course.announcements;
+
+  return res.render("student/announcement", {
+    a: anncodes,
+    user: req.user,
+    coursecode: req.params.code
+  });
+});
+
 
 module.exports = router;

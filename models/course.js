@@ -9,7 +9,7 @@ const CourseSchema = new mongoose.Schema(
     assignments: [{ type: String }],
     enrolled_students: [{ type: String }],
     ta_username: [{ type: String }],
-    announcement: Object,
+    announcements: [{type: Map, of: String}],
   },
   { collection: "courses", timestamps: true }
 );

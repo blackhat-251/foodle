@@ -11,6 +11,7 @@ const FileChunk = require("../models/file_chunk");
 const uri = process.env.uri;
 const JWT_SECRET = process.env.JWT_SECRET;
 const FileData = require("../models/file_data");
+const Assign = require("../models/assignment")
 mongoose.connect(uri);
 
 /* GET home page. */
@@ -226,8 +227,34 @@ router.post("/upload/:code", async (req, res) => {
   });
 
   console.log("File uploaded");
+  const ass =await Assign.findOne({assigncode : req.params.code})
 
-  return res.redirect("/student/assignments");
+  return res.redirect(`/student/assignments/${ass.coursecode}`);
 });
+
+router.post("/uploadcsv/:code", async (req, res) => {
+  if (req.user.role == "student") {
+    return res.send("unauthorized access");
+  }
+  const file = req.files.file;
+  var file_lines = file.data.toString().split('\n')
+  for(let i=1;i<file_lines.length-1;i++){
+    var line = file_lines[i].split(',')
+    const username = line[1]
+    const assigncode = req.params.code
+    const feedback = line[3]
+    const grade = line[4]
+    const file_data = await FileData.findOne({username: username, assigncode:assigncode})
+    file_data.feedback = feedback
+    file_data.grade = grade
+    await file_data.save()
+  }
+  console.log(file_lines)
+  console.log(file.data.toString())
+  console.log(file)
+  const ass =await Assign.findOne({assigncode : req.params.code})
+  return res.redirect(`/instructor/assignments/${ass.coursecode}`)
+});
+
 
 module.exports = router;

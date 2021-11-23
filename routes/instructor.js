@@ -33,7 +33,8 @@ router.all("/create_assignment/:code", async (req, res) => {
       title: req.body.title,
       description: req.body.description,
       assigncode: asscode,
-      coursecode: req.params.code
+      coursecode: req.params.code,
+      deadline: req.body.deadline
     });
     console.log("Assignment created ", response);
 
@@ -112,6 +113,38 @@ router.get("/assignments/:code", async (req, res) => {
   });
 });
 
+router.get("/announcements/:code", async (req, res) => {
+  var course = await Course.findOne({ coursecode: req.params.code });
+
+  var anncodes = course.announcements;
+  if (!anncodes) {
+    return res.redirect(`/instructor/create_announcement/${req.params.code}`);
+  }
+
+  return res.render("instructor/announcement", {
+    a: anncodes,
+    user: req.user,
+    coursecode: req.params.code
+  });
+});
+
+router.all("/create_announcement/:code", async (req,res)=>{
+  if(req.method === "GET")
+  {
+    return res.render("instructor/create_announcement", {user: req.user, coursecode: req.params.code})
+  }
+  var course = await Course.findOne({ coursecode: req.params.code });
+  course.announcements.push({
+    "title" : req.body.title,
+    "body" : req.body.body,
+    "date": new Date()
+  })
+  await course.save()
+
+  return res.redirect(`/instructor/announcements/${req.params.code}`)
+
+})
+
 router.get("/assignment", async (req, res) => {
   var assigncodes = req.user.assignments;
   if (!assigncodes) {
@@ -128,6 +161,8 @@ router.get("/assignment", async (req, res) => {
     user: req.user,
   });
 });
+
+
 
 router.get("/view_submission/:code", async (req, res) => {
   if (!req.user.assignments.includes(req.params.code)) {
@@ -148,27 +183,31 @@ router.post("/feedback/:id", async (req, res) => {
   const feedback = req.body.feedback;
   const f = await FileData.findOne({ _id: id });
   f.feedback = feedback;
+  f.grade = req.body.grade;
   await f.save();
   res.send("feedback recieved");
 });
 
-router.get("/inviteall/:code", async (req, res) => {
-  if (!req.user.assignments.includes(req.params.code)) {
+router.get("/inviteall/:coursecode", async (req, res) => {
+  if (!req.user.courses.includes(req.params.coursecode)) {
     return res.send("User Not Authorized");
   }
   const students = await User.find({ role: "student" });
+  const course = await Course.findOne({coursecode: req.params.coursecode})
 
   students.forEach(async (student) => {
     let maildetails = {
       from: process.env.email,
       to: student.email,
-      subject: "Invitation link for a course",
-      text: `Hi ${student.name}! \nClick http://localhost:3000/student/enroll/${req.params.code} to get enrolled into the course`,
+      subject: `Invitation link for Course ${course.name} (${course.coursecode})`,
+      text: `Hi ${student.name}! \nClick http://localhost:3000/student/enroll/${req.params.coursecode} to get enrolled into the course `,
     };
 
     await sendmail(maildetails);
   });
   return res.send("Successfully mailed to all");
 });
+
+
 
 module.exports = router;
