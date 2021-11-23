@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
   res.redirect("/instructor/profile");
 });
 router.get("/profile", (req, res) => {
-  return res.render("instructor/profile", { user: req.user });
+  return res.render("instructor/profile", { req: req, user: req.user });
 });
 
 router.all("/create_assignment", async (req, res) => {

@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
 
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+<%- include("./partials/head.ejs") %>
 
-<body>
+<%- include("./partials/home.ejs") %>
+
+<body style="padding-top: 4em; background-color:white;">
     <h2>Enrolled Assignments</h2>
     <ul>
         <% assignments.forEach(function(assignment) { %>
@@ -52,5 +50,5 @@
             </li>
             <% }) %>
     </ul>
-
+    <%- include("./partials/foot.ejs") %>
 </body>
