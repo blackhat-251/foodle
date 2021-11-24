@@ -15,16 +15,19 @@
             <div class="card mb-3">
                 <div class="card-header">
                     <div class="card-title">
-                        Title = <%= course.name %>
+                        Title = <%= course.course.name %>
                         </br>
-                        Description = <%= course.description %>
+                        Description = <%= course.course.description %>
                         </br>
-                        Code = <%= course.coursecode %>
+                        Code = <%= course.course.coursecode %>
                         </br>
-                        <a href="/student/assignments/<%= course.coursecode %>">View all assignments</a>
+                        <div class="progress" style="width: 25%;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="<%=course.completed%>" aria-valuemin="0" aria-valuemax="100" style="width: <%=course.completed%>%"><%=course.completed%>%</div>
+                        </div>
+                        <a href="/student/assignments/<%= course.course.coursecode %>">View all assignments</a>
                         </br>
-                        <a href="/student/announcements/<%= course.coursecode %>">View all announcements</a>
-                        <!-- <a href="/instructor/create_assignment/<%= course.coursecode %>">Create Assignments</a> -->
+                        <a href="/student/announcements/<%= course.course.coursecode %>">View all announcements</a>
+                        <!-- <a href="/instructor/create_assignment/<%= course.course.coursecode %>">Create Assignments</a> -->
                     </div>
                 </div>
             </div>

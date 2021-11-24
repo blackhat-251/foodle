@@ -14,6 +14,7 @@ mongoose.connect(uri);
 router.get("/", (req, res) => {
   res.redirect("/student/profile");
 });
+
 router.get("/profile", (req, res) => {
   return res.render("student/profile", { user: req.user });
 });
@@ -31,28 +32,9 @@ router.get("/view_submission", async (req, res) => {
   });
 });
 
-// router.get("/enroll", (req, res) => {
-//   res.render("student/enroll", { user: req.user });
-// });
 router.get("/enroll_course", (req, res) => {
   res.render("student/enroll_course", { user: req.user });
 });
-
-// router.post("/enroll", async (req, res) => {
-//   const assign_code = req.body.assign;
-//   console.log(assign_code);
-//   const assignment = await Assign.findOne({ assigncode: assign_code });
-//   console.log(assignment);
-//   if (!assignment) {
-//     return res.send("No such assignment");
-//   }
-//   if (req.user.assignments.includes(assign_code)) {
-//     return res.send("Already Enrolled");
-//   }
-//   req.user.assignments.push(assign_code);
-//   await req.user.save();
-//   return res.redirect("/student/assignments");
-// });
 
 router.post("/enroll_course", async (req, res) => {
   const course_code = req.body.coursecode;
@@ -74,14 +56,46 @@ router.post("/enroll_course", async (req, res) => {
   return res.redirect("/student/courses");
 });
 
+async function get_completion(courses,req) {
+  var course_list = []
+  const f = await FileData.find({ username: req.user.username });
+  var all_subs = f.map((file) => {return file.assigncode})
+  courses.forEach(function(course){
+    //Get all assignments -> Assignment count
+    var ass_count = course.assignments.length
+    if(ass_count == 0){
+      course_list.push({
+        course:course,
+        completed:0
+      })
+      return;
+    }
+    //From all submissions, get count of submissions to this course
+    var submissions = 0
+    all_subs.forEach(function(sub){
+      if(course.assignments.includes(sub)){
+        submissions+=1
+      }
+    })
+    course_list.push({
+      course:course,
+      completed:(submissions/ass_count)*100
+    })
+  })
+  //Return Array of {course,percentage}
+  return course_list
+}
+
 router.get("/courses", async (req, res) => {
   courses = await Course.find()
-  const filtered_course = await courses.filter((ass) => {
+  const filtered_courses = await courses.filter((ass) => {
     return req.user.courses.includes(ass.coursecode);
   });
+  var completed_courses = await get_completion(filtered_courses,req);
+  console.log(completed_courses)
   return res.render("student/dashboard", {
     user: req.user,
-    courses: filtered_course,
+    courses: completed_courses,
   })
 })
 
@@ -138,6 +152,26 @@ router.get("/announcements/:code", async (req, res) => {
     coursecode: req.params.code
   });
 });
+
+// router.get("/enroll", (req, res) => {
+//   res.render("student/enroll", { user: req.user });
+// });
+
+// router.post("/enroll", async (req, res) => {
+//   const assign_code = req.body.assign;
+//   console.log(assign_code);
+//   const assignment = await Assign.findOne({ assigncode: assign_code });
+//   console.log(assignment);
+//   if (!assignment) {
+//     return res.send("No such assignment");
+//   }
+//   if (req.user.assignments.includes(assign_code)) {
+//     return res.send("Already Enrolled");
+//   }
+//   req.user.assignments.push(assign_code);
+//   await req.user.save();
+//   return res.redirect("/student/assignments");
+// });
 
 
 module.exports = router;
