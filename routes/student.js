@@ -79,7 +79,7 @@ async function get_completion(courses,req) {
     })
     course_list.push({
       course:course,
-      completed:(submissions/ass_count)*100
+      completed: Math.round((submissions/ass_count)*100)
     })
   })
   //Return Array of {course,percentage}
