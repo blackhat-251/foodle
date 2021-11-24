@@ -22,7 +22,7 @@
                         Code = <%= course.course.coursecode %>
                         </br>
                         <div class="progress" style="width: 25%;">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="<%=course.completed%>" aria-valuemin="0" aria-valuemax="100" style="width: <%=course.completed%>%"><%=course.completed%>%</div>
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="<%=course.completed%>" aria-valuemin="0" aria-valuemax="100" style="width: <%= course.completed%>%"><%=course.completed%>%</div>
                         </div>
                         <a href="/student/assignments/<%= course.course.coursecode %>">View all assignments</a>
                         </br>

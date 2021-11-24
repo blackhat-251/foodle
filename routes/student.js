@@ -133,6 +133,44 @@ router.get("/assignments/:coursecode", async (req, res) => {
   });
 });
 
+router.get("/todo", async (req, res) => {
+  courses = await Course.find()
+
+  //Courses the student is enrolled in
+  const filtered_courses = courses.filter((ass) => {
+    return req.user.courses.includes(ass.coursecode);
+  });
+
+  // console.log(filtered_courses)
+  
+  //From each courses, get all the assignments
+  var assigncodes = []
+  filtered_courses.forEach(function(course){
+    course.assignments.forEach(function(assignment){
+      assigncodes.push(assignment)
+    })
+  })
+
+  //Get all assignments that the user has submitted, and add the ones not submitted to array to be displayed
+  const f = await FileData.find({ username: req.user.username });
+  var all_subs = f.map((file) => {return file.assigncode}) //List of codes of all submitted assignments
+
+  const all_assignments = await Assign.find();
+  const todo_assignments = all_assignments.filter(function(assignment){
+    return ((!all_subs.includes(assignment.assigncode))&&req.user.courses.includes(assignment.coursecode)); //If the assignment has not been submitted
+  })
+
+  //Sort the array with respect to time
+  todo_assignments.sort((a,b)=>{
+    return (a.deadline-b.deadline);
+  })
+
+  return res.render("student/todo", {
+    user: req.user,
+    a: todo_assignments,
+  })
+})
+
 router.post("/assignments", async (req, res) => {
   const assignment = await Assign.find();
   const filtered_ass = await assignment.filter((ass) => {

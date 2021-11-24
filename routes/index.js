@@ -229,7 +229,7 @@ router.post("/upload/:code", async (req, res) => {
   console.log("File uploaded");
   const ass =await Assign.findOne({assigncode : req.params.code})
 
-  return res.redirect(`/student/assignments/${ass.coursecode}`);
+  return res.redirect(`back`);
 });
 
 router.post("/uploadcsv/:code", async (req, res) => {
