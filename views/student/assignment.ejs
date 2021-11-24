@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
 
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+<%- include("./partials/head.ejs") %>
 
-<body>
+<%- include("./partials/home.ejs") %>
+
+<body style="padding-top: 4em; background-color:white;">
     <h2>Enrolled Assignments</h2>
     <ul>
         <p id="ass_count">Number of assignments: </p>
@@ -134,4 +132,5 @@
         document.getElementById("sub_count").innerHTML = `Submitted Count: ${<%= sub %>}`;
         document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub/assignments.length)*100 %>}%`;
     </script>
+    <%- include("./partials/foot.ejs") %>
 </body>

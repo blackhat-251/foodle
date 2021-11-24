@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
+<%- include("./partials/head.ejs") %>
 
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+<%- include("./partials/home.ejs") %>
 
-<body>
-    <h2>profile</h2>
-    <ul>
-        <li><a href="/student/courses">View your Enrolled courses</a></li>
-        <li><a href="/student/enroll_course">Enroll for new course</a></li>
-        <li><a href="/student/view_submission">view all submission</a></li>
-        <li><a href="/student/todo">To-Do list(Pending Assignments)</a></li>
-        <li><a href="/update_password">change password</a></li>
-        <li><a href="/editprofile">Edit Profile</a></li>
-        <li><a href="/logout">Logout</a></li>
-    </ul>
-
+<body style="padding-top: 4em; background-color:white;">
+    <div>
+        <h2>profile</h2>
+        <ul>
+            <li><a href="/student/courses">View your Enrolled courses</a></li>
+            <li><a href="/student/enroll_course">Enroll for new course</a></li>
+            <li><a href="/student/view_submission">view all submission</a></li>
+            <li><a href="/student/todo">To-Do list(Pending Assignments)</a></li>
+            <li><a href="/update_password">change password</a></li>
+            <li><a href="/editprofile">Edit Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+        <ul>
+            <% for(var i=0; i < 100; i++) { %>
+                <li> <% i %> </li>
+            <% } %>
+        </ul>
+    </div>
+    
+    <%- include("./partials/foot.ejs") %>
 </body>
