@@ -9,6 +9,10 @@
 <body>
     <h2>Enrolled Assignments</h2>
     <ul>
+        <p id="ass_count">Number of assignments: </p>
+        <p id="sub_count">Submitted: </p>
+        <p id="completion"></p>
+        <% var sub = 0 %> 
         <% assignments.forEach(function(assignment) { %>
             <li>
                 title: <%= assignment.title%>
@@ -18,51 +22,57 @@
                         instructor: <%= assignment.author%>
                             </br>
                             Assignment CreatedAt: <%= assignment.createdAt%>
-                        </br>
-                        Due Deadline: <%= assignment.deadline%>
-                                <form action="/upload/<%= assignment.assigncode %>" method="post"
-                                    enctype="multipart/form-data">
-                                    <div class="custom-file mb-3">
-                                        <input type="file" name="file" id="file1">
-                                        <label for="file1" id="file-label"><small>Choose file</small></label>
-                                    </div>
-                                    <input type="submit" id="submit-button" value="Submit">
-                                </form>
-                                <% if(files) { %>
-                                    <ul>
-                                        <% files.forEach(function(file) {%>
-                                            <% if (file.assigncode==assignment.assigncode) { %>
-                                                <li> Your Last Submission:
-                                                    <%= file.filename %>
-                                                        <a href="/download/<%= file._id %>" download> download
-                                                            submission</a>
-                                                </li>
-                                                <li>
-                                                    grade: 
-                                                    <% if(file.grade) { %>
-                                                        <%= file.grade %>
-                                                        
-                                                        <% } else { %>
-                                                            No Grade recieved
-                                                                <% } %>
+                                </br>
+                                Due Deadline: <%= assignment.deadline%>
+                                    <form action="/upload/<%= assignment.assigncode %>" method="post"
+                                        enctype="multipart/form-data">
+                                        <div class="custom-file mb-3">
+                                            <input type="file" name="file" id="file1">
+                                            <label for="file1" id="file-label"><small>Choose file</small></label>
+                                        </div>
+                                        <input type="submit" id="submit-button" value="Submit">
+                                    </form>
+                                    <% if(files) { %>
+                                        <ul>
+                                            <% files.forEach(function(file) {%>
+                                                <% if (file.assigncode==assignment.assigncode) { %>
+                                                    <% sub = sub+1 %>
+                                                    <li> Your Last Submission:
+                                                        <%= file.filename %>
+                                                            <a href="/download/<%= file._id %>" download> download
+                                                                submission</a>
                                                     </li>
-                                                <li>
-                                                    feedback:
-                                                    <% if(file.feedback=="" ) { %>
-                                                        No feedback recieved
-                                                        <% } else { %>
-                                                            <%= file.feedback %>
-                                                                <% } %>
+                                                    <li>
+                                                        grade:
+                                                        <% if(file.grade) { %>
+                                                            <%= file.grade %>
 
+                                                                <% } else { %>
+                                                                    No Grade recieved
                                                                     <% } %>
-                                                                        <%}) %>
-                                                
-                                    </ul>
-                                    <% } else { %>
-                                        <p>No files to show</p>
-                                        <% } %>
+                                                    </li>
+                                                    <li>
+                                                        feedback:
+                                                        <% if(file.feedback=="" ) { %>
+                                                            No feedback recieved
+                                                            <% } else { %>
+                                                                <%= file.feedback %>
+                                                                    <% } %>
+
+                                                                        <% } %>
+                                                                            <%}) %>
+
+                                        </ul>
+                                        <% } else { %>
+                                            <p>No files to show</p>
+                                            <% } %>
             </li>
             <% }) %>
     </ul>
 
+    <script>
+        document.getElementById("ass_count").innerHTML = `Number of Assignments: ${<%= assignments.length %>}`;
+        document.getElementById("sub_count").innerHTML = `Submitted Count: ${<%= sub %>}`;
+        document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub/assignments.length)*100 %>}%`;
+    </script>
 </body>
