@@ -1,13 +1,23 @@
-<h2>Edit profile</h2>
-<h1>Hello <%= user.name %></h1>
-<% if(message) {%>
-    <h4><%= message.error %></h4>
-    <h4><%= message.success %></h4>
-<% }%>
-<form action="/editprofile" method="post">
-    <label for="name">New Name</label>
-    <input type="text" name="name">
-    <label for="email">New Email</label>
-    <input type="text" name="email">
-    <input type="submit" value="Submit">
-</form>
+<% if(user.role == "student") { %>
+<%- include("./student/partials/head.ejs") %>
+
+<%- include("./student/partials/home.ejs") %>
+<% } %>
+
+<body style="padding-top: 4em; background-color:white;">
+    <h2>Edit profile</h2>
+    <% if(message) {%>
+        <h4><%= message.error %></h4>
+        <h4><%= message.success %></h4>
+    <% }%>
+    <form action="/editprofile" method="post">
+        <label for="name">New Name</label>
+        <input type="text" name="name">
+        <label for="email">New Email</label>
+        <input type="text" name="email">
+        <input type="submit" value="Submit">
+    </form>
+    <% if(user.role == "student") { %>
+    <%- include("./student/partials/foot.ejs") %>
+    <% } %>
+</body>

@@ -1,59 +1,64 @@
 <header>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-md navbar-light fixed-top scrolling-navbar" style="background-color:whitesmoke;">
-      <div class="container-fluid">
-  
-        <!-- Brand -->
-        <a class="navbar-brand" href="https://mdbecommerce.com/">
-          <i class="fab fa-mdb fa-3x" alt="mdb logo"></i>
-        </a>
-  
-        <!-- Collapse button -->
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
-          aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-  
-        <!-- Links -->
-        <div class="collapse navbar-collapse" id="basicExampleNav">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="navbar-brand">
-                        <img src="/images/blackhat.png" alt="Logo" width="10%">  blackhat251 Foodle
-                    </a>
-                </li>
-            </ul>
-  
-          <!-- Right -->
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a href="/student/enroll" class="nav-link waves-effect">
-                Enroll
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-md navbar-light fixed-top scrolling-navbar" style="background-color:whitesmoke;">
+    <div class="container-fluid">
+
+      <!-- Collapse button -->
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav"
+        aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="basicExampleNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="navbar-brand" href="/student/courses">
+              <img src="/images/blackhat.png" alt="Logo" width="10%"> blackhat251 Foodle
+            </a>
+          </li>
+        </ul>
+
+        <!-- Right -->
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle waves-effect" data-toggle="dropdown" aria-haspopup="true"
+              aria-expanded="true">
+              Enroll
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item">
+                <form class="form-inline" action="/student/enroll_course" method="POST">
+                  <input class="form-control mr-sm-2" type="text" placeholder="XXX" name="coursecode">
+                  <button class="btn btn-outline-success my-2" type="submit">Enroll</button>
+                </form>
               </a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle waves-effect" id="navbarDropdownMenuLink3" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="true">
-                  <%= user.name %>
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="/student/assignments">Enrolled Assignments</a>
-                  <a class="dropdown-item" href="/student/view_submission">My Submissions</a>
-                  <a class="dropdown-item" href="#!">Grades</a>
-                  <a class="dropdown-item" href="/editprofile">Edit Profile</a>
-                  <a class="dropdown-item" href="/update_password">Update Password</a>
-                </div>
-              </li>
-            <li class="nav-item pl-2 mb-2 mb-md-0">
-              <a href="/logout" type="button"
-                class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light">Log Out</a>
-            </li>
-          </ul>
-  
-        </div>
-        <!-- Links -->
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle waves-effect" id="navbarDropdownMenuLink3" data-toggle="dropdown"
+              aria-haspopup="true" aria-expanded="true">
+              <%= user.name %>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="/student/courses">My Courses</a>
+              <a class="dropdown-item" href="/student/todo">Pending Assignments</a>
+              <a class="dropdown-item" href="/student/view_submission">My Submissions</a>
+              <a class="dropdown-item" href="#!">Grades</a>
+              <a class="dropdown-item" href="/editprofile">Edit Profile</a>
+              <a class="dropdown-item" href="/update_password">Update Password</a>
+            </div>
+          </li>
+          <li class="nav-item pl-2 mb-2 mb-md-0">
+            <a href="/logout" type="button"
+              class="btn btn-outline-info btn-md btn-rounded btn-navbar waves-effect waves-light">Log Out</a>
+          </li>
+        </ul>
+
       </div>
-    </nav>
-    <!-- Navbar -->
-  
-  </header>
+      <!-- Links -->
+    </div>
+  </nav>
+  <!-- Navbar -->
+
+</header>

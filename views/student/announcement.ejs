@@ -1,13 +1,10 @@
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
+<%- include("./partials/head.ejs") %>
 
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+<%- include("./partials/home.ejs") %>
 
-<body>
-    <h2>Announcements</h2>
+<body style="padding-top: 4em; background-color:white;">
+    <h2>Announcements : <%= course.name %></h2>
     <% if(a) { %>
         <% a.reverse().forEach(function(assign) {%>
             <div class="card mb-3">
@@ -28,4 +25,5 @@
                 <% } else { %>
                     <p>No announcemmnet to show</p>
                     <% } %>
+    <%- include("./partials/foot.ejs") %>
 </body>

@@ -4,22 +4,37 @@
 <%- include("./partials/home.ejs") %>
 
 <body style="padding-top: 4em; background-color:white;">
-    <div>
-        <h2>profile</h2>
-        <ul>
-            <li><a href="/student/courses">View your Enrolled courses</a></li>
-            <li><a href="/student/enroll_course">Enroll for new course</a></li>
-            <li><a href="/student/view_submission">view all submission</a></li>
-            <li><a href="/student/todo">To-Do list(Pending Assignments)</a></li>
-            <li><a href="/update_password">change password</a></li>
-            <li><a href="/editprofile">Edit Profile</a></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
-        <ul>
-            <% for(var i=0; i < 100; i++) { %>
-                <li> <% i %> </li>
-            <% } %>
-        </ul>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-9">
+                <h2>profile</h2>
+                <div class="row">
+                    <% for(var i=0; i < 20; i++) { %>
+                        <div class="col-md-auto m-2">
+                            <div class="card" style="width: 20rem;" id="explore-card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h5 class="card-title">Hello World</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">Names</h6>
+                                        </div>
+                                        <div class="col"><img src="/images/blackhat.png" style="width:100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            <div class="col">
+                <ul>
+                    <% for(var i=0; i < 100; i++) { %>
+                        <li> <% i %> </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        
     </div>
     
     <%- include("./partials/foot.ejs") %>

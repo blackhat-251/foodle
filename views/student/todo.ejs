@@ -1,36 +1,36 @@
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
+<%- include("./partials/head.ejs") %>
 
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+    <%- include("./partials/home.ejs") %>
 
-<body>
+<body style="padding-top: 4em; background-color:white;">
     <h2>Pending Assignments</h2>
-    <ul>
-        <% a.forEach(function(assignment) { %>
-            <li>
-                title: <%= assignment.title%>
-                    </br>
-                    Course: <%= assignment.coursecode%>
+    <% a.forEach(function(assignment) { %>
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="card-title">
+        title: <%= assignment.title%>
+            </br>
+            Course: <%= assignment.coursecode%>
                 </br>
-                    description: <%= assignment.description%>
+                description: <%= assignment.description%>
+                    </br>
+                    instructor: <%= assignment.author%>
                         </br>
-                        instructor: <%= assignment.author%>
+                        Assignment CreatedAt: <%= assignment.createdAt%>
                             </br>
-                            Assignment CreatedAt: <%= assignment.createdAt%>
-                                </br>
-                                Due Deadline: <%= assignment.deadline%>
-                                    <form action="/upload/<%= assignment.assigncode %>" method="post"
-                                        enctype="multipart/form-data">
-                                        <div class="custom-file mb-3">
-                                            <input type="file" name="file" id="file1">
-                                            <label for="file1" id="file-label"><small>Choose file</small></label>
-                                        </div>
-                                        <input type="submit" id="submit-button" value="Submit">
-                                    </form>
-            </li>
-            <% }) %>
-    </ul>
+                            Due Deadline: <%= assignment.deadline%>
+                                <form action="/upload/<%= assignment.assigncode %>" method="post"
+                                    enctype="multipart/form-data">
+                                    <div class="custom-file mb-3">
+                                        <input type="file" name="file" id="file1">
+                                        <label for="file1" id="file-label"><small>Choose file</small></label>
+                                    </div>
+                                    <input type="submit" id="submit-button" value="Submit">
+                                </form>
+                </div>
+                </div>
+                </div>
+                                <% }) %>
+    <%- include("./partials/foot.ejs") %>
 </body>

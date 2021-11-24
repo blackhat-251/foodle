@@ -43,7 +43,7 @@ router.post("/enroll_course", async (req, res) => {
   console.log(course);
   if (!course) {
     req.flash("error", "No such Course Exists")
-    return res.redirect("/student/enroll_course");
+    return res.redirect("back");
   }
   if (req.user.courses.includes(course_code)) {
     req.flash("error", "Already Enrolled")
@@ -130,6 +130,7 @@ router.get("/assignments/:coursecode", async (req, res) => {
     user: req.user,
     assignments: filtered_ass,
     files: f,
+    course: course
   });
 });
 
@@ -187,7 +188,7 @@ router.get("/announcements/:code", async (req, res) => {
   return res.render("student/announcement", {
     a: anncodes,
     user: req.user,
-    coursecode: req.params.code
+    course: course
   });
 });
 
