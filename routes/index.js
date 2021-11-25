@@ -12,6 +12,7 @@ const uri = process.env.uri;
 const JWT_SECRET = process.env.JWT_SECRET;
 const FileData = require("../models/file_data");
 const Assign = require("../models/assignment")
+const Message = require("../models/message")
 mongoose.connect(uri);
 
 /* GET home page. */
@@ -256,5 +257,51 @@ router.post("/uploadcsv/:code", async (req, res) => {
   return res.redirect(`/instructor/assignments/${ass.coursecode}`)
 });
 
+
+router.get("/chat/:username", async (req,res) =>{
+  const chatWith = await User.findOne({'username':req.params.username});
+
+  if(!chatWith){
+    return res.send("No such user exists with the provided username.");
+  }
+
+  const messages = await Message.find({$or:[
+    {$and:[{'sender':req.user.username},{'receiver':req.params.username}]},
+    {$and:[{'sender':req.params.username},{'receiver':req.user.username}]},
+  ]})
+
+  console.log("hmmmmm", chatWith);
+  return res.render("chat",{'msgs':messages, 'chatWith':chatWith, 'user':req.user})
+})
+
+router.post("/chat/sendmsg/:username", async (req, res)=>{
+  const chatWith = await User.findOne({'username':req.params.username});
+
+  if(!chatWith){
+    return res.send("No such user exists with the provided username.");
+  }
+
+  const response = await Message.create({
+    content : req.body.content,
+    sender : req.user.username,
+    receiver : chatWith.username
+  });
+
+  console.log("Message sent", response);
+  return res.send("OK")
+})
+
+router.post("/chat/getmsg/:username", async (req,res)=>{
+  const n = parseInt(req.body.n);
+  const msgs = await Message.find({$and:[{'sender':req.params.username},{'receiver':req.user.username}]}).sort({'time':-1}).limit(n);
+
+  return res.json(msgs);
+})
+
+router.get("/chat/noofmsgs/:username", async (req,res)=>{
+  // sends the number of messages sent by the sender
+  const number = await Message.countDocuments({$and:[{'sender':req.params.username},{'receiver':req.user.username}]});
+  return res.send(`${number}`);
+})
 
 module.exports = router;
