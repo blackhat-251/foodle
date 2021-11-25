@@ -1,0 +1,9 @@
+<body>
+    <h1>Course <%= course.name %></h1>
+    Enrolled Students:
+    <ul>
+    <% students.forEach(function(student){ %>
+        <li><%= student.name %></li>
+    <% }) %>
+    </ul> 
+</body>

@@ -210,13 +210,26 @@ router.post("/enroll_student/:coursecode", async (req, res) => {
   if(!student){
     res.send("No such student exists")
   }
-  if(student.courses.includes(req.params.coursecode)){
-    res.redirect("back");
+  if((!student.courses)||!student.courses.includes(req.params.coursecode)){
+    student.courses.push(req.params.coursecode);
+    await student.save();
+    return res.redirect(`/instructor/enrolled_students/${req.params.coursecode}`)
   }
-  student.courses.push(req.params.coursecode);
-  await student.save();
-  res.redirect("back");
+  return res.redirect("back");
 });
+
+router.get("/enrolled_students/:coursecode", async (req, res) => {
+  const users = await User.find();
+  const course = await Course.findOne({coursecode: req.params.coursecode})
+  const enrolled_students = users.filter((user)=>{
+    return (user.courses.includes(req.params.coursecode) && user.role==="student")
+  })
+  return res.render("instructor/enrolled_students", {
+    user: req.user,
+    students: enrolled_students,
+    course: course
+  })
+})
 
 
 
