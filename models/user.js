@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema(
     role: { type: String, required: false },
     assignments: [{ type: String }],
     courses: [{type: String}],
+    ta_courses: [{type: String}] //Course codes for which the student is a TA
   },
   { collection: "users" }
 );

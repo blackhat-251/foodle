@@ -27,6 +27,12 @@
                                     for the course through mail
                                     </br>
                                     <a href="/instructor/announcements/<%= course.coursecode %>">View all announcement</a>
+                                </br>
+                                <form action="/instructor/enroll_student/<%= course.coursecode %>" method="post">
+                                    <label for="username">Enroll Student with username : </label>
+                                    <input type="text" name="username" default="username">
+                                    <input type="submit" value="Enroll">
+                                </form>
                                     <!-- <a href="/instructor/create_assignment/<%= course.coursecode %>">Create Assignments</a> -->
                     </div>
                 </div>

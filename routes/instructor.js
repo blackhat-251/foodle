@@ -71,8 +71,6 @@ router.all("/create_course", async (req, res) => {
     return res.send("Some error occured, please try again.");
   }
   res.redirect("/instructor/");
-  
-  
 });
 
 router.get("/courses", async (req, res) => {
@@ -162,8 +160,6 @@ router.get("/assignment", async (req, res) => {
   });
 });
 
-
-
 router.get("/view_submission/:code", async (req, res) => {
   if (!req.user.assignments.includes(req.params.code)) {
     return res.send("User Not Authorized");
@@ -206,6 +202,20 @@ router.get("/inviteall/:coursecode", async (req, res) => {
     await sendmail(maildetails);
   });
   return res.send("Successfully mailed to all");
+});
+
+router.post("/enroll_student/:coursecode", async (req, res) => {
+  const student_username = req.body.username;
+  const student = await User.findOne({username: student_username});
+  if(!student){
+    res.send("No such student exists")
+  }
+  if(student.courses.includes(req.params.coursecode)){
+    res.redirect("back");
+  }
+  student.courses.push(req.params.coursecode);
+  await student.save();
+  res.redirect("back");
 });
 
 
