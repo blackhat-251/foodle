@@ -27,6 +27,9 @@
                                     for the course through mail
                                     </br>
                                     <a href="/instructor/announcements/<%= course.coursecode %>">View all announcement</a>
+                                    </br>
+                                    <a href="/forum/<%= course.coursecode %>">View forum</a>
+
                                 </br>
                                 <form action="/instructor/enroll_student/<%= course.coursecode %>" method="post">
                                     <label for="username">Enroll Student with username : </label>

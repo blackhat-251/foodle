@@ -1,0 +1,98 @@
+<h1><%= course.name %> forum</h1>
+<hr>
+<div id = "chat">
+<% msgs.forEach(function(msg){ %>
+    <% if(msg.sender != user.username){ %>
+        <div class="received-msg">
+    <% } else { %>
+        <div class="sent-msg">
+    <% } %>
+            <% if(course.creator == msg.sender){ %>
+                <h3 style="color:Tomato;"><%= msg.sender %> (Course Instructor)</h3>
+            <% } else { %>
+                <h3><%= msg.sender %></h3>
+            <% } %>
+            <h4><%= msg.content %></h4>
+        </div>
+    <hr>
+<% }) %>
+</div>
+
+<input id="msgContent"> <button onclick="sendForumMsg()">Send</button>
+
+<script>
+    function sendForumMsg(){
+        let msgContent = document.getElementById("msgContent").value;
+
+        fetch("/forum/sendmsg/<%= course.coursecode %>",{
+            method: "post",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"content":msgContent})
+        }).then((resp)=>{
+            resp.text().then((text)=>{
+                console.log(text);
+
+                if(text == "OK"){
+                    addForumMsg(msgContent, "<%= user.username %>", true);
+                }else{
+                    alert("Message sending failed, please check your internet connection.")
+                }
+            })
+        })
+    }
+
+    function addForumMsg(content, sender, isOwnMsg){
+        let divtag = document.createElement("div")
+        if(isOwnMsg){
+            divtag.className = "sent-msg";
+        }else{
+            divtag.className = "received-msg";
+        }
+
+        document.getElementById("chat").append(divtag)
+        
+        if(sender == "<%= course.creator %>"){
+            divtag.innerHTML = `<h3 style="color:Tomato;">${sender} (Course Instructor)</h3><h4>${content}</h4><hr>`;
+        }else{
+            divtag.innerHTML = `<h3>${sender}</h3><h4>${content}</h4><hr>`;
+        } 
+    }
+
+    function checkNewForumMsgs(){
+        let recievedMsgs = document.getElementsByClassName("received-msg").length
+        console.log(recievedMsgs);
+
+        fetch("/forum/noofmsgs/<%= course.coursecode %>")
+        .then((resp)=>{
+            resp.text().then((text)=>{
+                if( parseInt(text) > recievedMsgs){
+                    getForumMsgs(parseInt(text) - recievedMsgs);
+                }
+            })
+        })
+    }
+
+    function getForumMsgs(noOfMsgs){
+        fetch("/forum/getmsg/<%= course.coursecode %>",{
+            method: "post",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({"n":noOfMsgs})
+        }).then((resp)=>{
+            resp.text().then((text)=>{
+                let json = JSON.parse(text);
+
+                for(let i=0; i < json.length; i++){
+                    addForumMsg(json[i].content, json[i].sender, false);
+                }
+            })
+        })
+    }
+
+    setInterval(checkNewForumMsgs,2000);
+</script>

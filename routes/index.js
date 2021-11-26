@@ -11,8 +11,11 @@ const FileChunk = require("../models/file_chunk");
 const uri = process.env.uri;
 const JWT_SECRET = process.env.JWT_SECRET;
 const FileData = require("../models/file_data");
-const Assign = require("../models/assignment")
-const Message = require("../models/message")
+const Assign = require("../models/assignment");
+const Message = require("../models/message");
+const Course = require("../models/course");
+const { trueDependencies } = require("mathjs");
+
 mongoose.connect(uri);
 
 /* GET home page. */
@@ -257,7 +260,7 @@ router.post("/uploadcsv/:code", async (req, res) => {
   return res.redirect(`/instructor/assignments/${ass.coursecode}`)
 });
 
-
+// start of the chat routes
 router.get("/chat/:username", async (req,res) =>{
   const chatWith = await User.findOne({'username':req.params.username});
 
@@ -266,11 +269,10 @@ router.get("/chat/:username", async (req,res) =>{
   }
 
   const messages = await Message.find({$or:[
-    {$and:[{'sender':req.user.username},{'receiver':req.params.username}]},
-    {$and:[{'sender':req.params.username},{'receiver':req.user.username}]},
+    {$and:[{'sender':req.user.username},{'receiver':req.params.username},{'isGroupMsg':false}]},
+    {$and:[{'sender':req.params.username},{'receiver':req.user.username},{'isGroupMsg':false}]},
   ]})
 
-  console.log("hmmmmm", chatWith);
   return res.render("chat",{'msgs':messages, 'chatWith':chatWith, 'user':req.user})
 })
 
@@ -283,6 +285,7 @@ router.post("/chat/sendmsg/:username", async (req, res)=>{
 
   const response = await Message.create({
     content : req.body.content,
+    isGroupMsg : false,
     sender : req.user.username,
     receiver : chatWith.username
   });
@@ -293,15 +296,81 @@ router.post("/chat/sendmsg/:username", async (req, res)=>{
 
 router.post("/chat/getmsg/:username", async (req,res)=>{
   const n = parseInt(req.body.n);
-  const msgs = await Message.find({$and:[{'sender':req.params.username},{'receiver':req.user.username}]}).sort({'time':-1}).limit(n);
+  const msgs = await Message.find({$and:[{'sender':req.params.username},{'receiver':req.user.username},{'isGroupMsg':false}]}).sort({'time':-1}).limit(n);
 
   return res.json(msgs);
 })
 
 router.get("/chat/noofmsgs/:username", async (req,res)=>{
   // sends the number of messages sent by the sender
-  const number = await Message.countDocuments({$and:[{'sender':req.params.username},{'receiver':req.user.username}]});
+  const number = await Message.countDocuments({$and:[{'sender':req.params.username},{'receiver':req.user.username},{'isGroupMsg':false}]});
   return res.send(`${number}`);
 })
+
+// end of the chat routes
+
+// start of the forum routes
+router.get("/forum/:coursecode", async (req,res) =>{
+  if(!req.user.courses.includes(req.params.coursecode)){
+    return res.send("You are not part of that course");
+  }
+
+  const course = await Course.findOne({'coursecode':req.params.coursecode});
+
+  if(!course){
+    return res.send("Course doesn't exist");
+  }
+
+  const messages = await Message.find({$and:[
+    {'isGroupMsg':true},{'receiver':course.coursecode}
+  ]})
+
+  return res.render("forum",{'msgs':messages, 'course':course, 'user':req.user})
+})
+
+router.post("/forum/sendmsg/:coursecode", async (req, res)=>{
+  if(!req.user.courses.includes(req.params.coursecode)){
+    return res.send("You are not part of that course");
+  }
+  
+  const course = await Course.findOne({'coursecode':req.params.coursecode});
+
+  if(!course){
+    return res.send("Course doesn't exist");
+  }
+
+  const response = await Message.create({
+    content : req.body.content,
+    isGroupMsg : true,
+    sender : req.user.username,
+    receiver : course.coursecode
+  });
+
+  return res.send("OK")
+})
+
+router.post("/forum/getmsg/:coursecode", async (req,res)=>{
+  if(!req.user.courses.includes(req.params.coursecode)){
+    return res.send("You are not part of that course");
+  }
+
+  const n = parseInt(req.body.n);
+  const msgs = await Message.find({$and:[{'isGroupMsg':true},{'receiver':req.params.coursecode}]}).sort({'time':-1}).limit(n);
+
+  return res.json(msgs);
+})
+
+router.get("/forum/noofmsgs/:coursecode", async (req,res)=>{
+  if(!req.user.courses.includes(req.params.coursecode)){
+    return res.send("You are not part of that course");
+  }
+
+  // sends the number of messages sent by the sender
+  const number = await Message.countDocuments({$and:[{'isGroupMsg':true},{'receiver':req.params.coursecode},{'sender':{$ne:req.user.username}}]});
+  return res.send(`${number}`);
+})
+
+// end of chat routes
+
 
 module.exports = router;
