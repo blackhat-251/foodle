@@ -2,134 +2,139 @@
 
 <%- include("./partials/head.ejs") %>
 
-<%- include("./partials/home.ejs") %>
+    <%- include("./partials/home.ejs") %>
 
-<% function get_time(date1, date2) { var diff=(date1 - date2)/(1000 * 60 * 60 * 24); //In days var time;
-    if(Math.abs(diff)>1)
-    {
-    time = Math.floor(Math.abs(diff)).toString();
-    if(diff>0)
-    {
-    return (time + " days early");
-    }
-    else
-    {
-    return (time + " days late");
-    }
-    }
-    diff*=24; //In hours
-    if(Math.abs(diff)>1)
-    {
-    time = Math.floor(Math.abs(diff)).toString();
-    if(diff>0)
-    {
-    return (time + " hours early");
-    }
-    else
-    {
-    return (time + " hours late");
-    }
-    }
-    diff*=60; //In mins
-    if(Math.abs(diff)>1)
-    {
-    time = Math.floor(Math.abs(diff)).toString();
-    if(diff>0)
-    {
-    return (time + " minutes early");
-    }
-    else
-    {
-    return (time + " minutes late");
-    }
-    }
-    diff*=60; //In seconds
-    time = Math.floor(Math.abs(diff)).toString();
-    if(diff>0)
-    {
-    return (time + " minutes early");
-    }
-    else
-    {
-    return (time + " minutes late");
-    }
-    }
-%>
+        <% function get_time(date1, date2) { var diff=(date1 - date2)/(1000 * 60 * 60 * 24); //In days var time;
+            if(Math.abs(diff)>1)
+            {
+            time = Math.floor(Math.abs(diff)).toString();
+            if(diff>0)
+            {
+            return (time + " days early");
+            }
+            else
+            {
+            return (time + " days late");
+            }
+            }
+            diff*=24; //In hours
+            if(Math.abs(diff)>1)
+            {
+            time = Math.floor(Math.abs(diff)).toString();
+            if(diff>0)
+            {
+            return (time + " hours early");
+            }
+            else
+            {
+            return (time + " hours late");
+            }
+            }
+            diff*=60; //In mins
+            if(Math.abs(diff)>1)
+            {
+            time = Math.floor(Math.abs(diff)).toString();
+            if(diff>0)
+            {
+            return (time + " minutes early");
+            }
+            else
+            {
+            return (time + " minutes late");
+            }
+            }
+            diff*=60; //In seconds
+            time = Math.floor(Math.abs(diff)).toString();
+            if(diff>0)
+            {
+            return (time + " minutes early");
+            }
+            else
+            {
+            return (time + " minutes late");
+            }
+            }
+            %>
 
-<body style="padding-top: 4em; background-color:white;">
-    <h2>Enrolled Assignments : Course <%= course.name %></h2>
-        <p id="ass_count">Number of assignments: </p>
-        <p id="sub_count">Submitted: </p>
-        <p id="completion"></p>
-        
-        <% var sub = 0 %> 
-        <% assignments.forEach(function(assignment) { %>
-            <div class="card mb-3 mx-2">
-                <div class="card-header">
-                    <div class="card-title">
-                title: <%= assignment.title%>
-                    </br>
-                    description: <%= assignment.description%>
-                        </br>
-                        instructor: <%= assignment.author%>
-                            </br>
-                            Assignment CreatedAt: <%= assignment.createdAt%>
-                                </br>
-                                Due Deadline: <%= assignment.deadline%>
-                                    <form action="/upload/<%= assignment.assigncode %>" method="post"
-                                        enctype="multipart/form-data">
-                                        <div class="custom-file mb-3">
-                                            <input type="file" name="file" id="file1">
-                                            <label for="file1" id="file-label"><small>Choose file</small></label>
-                                        </div>
-                                        <input type="submit" id="submit-button" value="Submit">
-                                    </form>
-                                    <% if(files) { %>
-                                        <ul>
-                                            <% files.forEach(function(file) {%>
-                                                <% if (file.assigncode==assignment.assigncode) { %>
-                                                    <% sub = sub+1 %>
-                                                    <li> Your Last Submission:
-                                                        <%= file.filename %>
-                                                            <a href="/download/<%= file._id %>" download> download
-                                                                submission</a>
-                                                    </li>
-                                                    <li>
-                                                        The assignment was submitted: <%= get_time(assignment.deadline,file.updatedAt) %>
-                                                    </li>
-                                                    <li>
-                                                        grade:
-                                                        <% if(file.grade) { %>
-                                                            <%= file.grade %>
+            <body style="padding-top: 4em; background-color:white;">
+                <h2>Enrolled Assignments : Course <%= course.name %>
+                </h2>
+                <p id="ass_count">Number of assignments: </p>
+                <p id="sub_count">Submitted: </p>
+                <p id="completion"></p>
 
-                                                                <% } else { %>
-                                                                    No Grade recieved
-                                                                    <% } %>
-                                                    </li>
-                                                    <li>
-                                                        feedback:
-                                                        <% if(file.feedback=="" ) { %>
-                                                            No feedback recieved
+                <% var sub=0 %>
+                    <% assignments.forEach(function(assignment) { %>
+                        <div class="card mb-3 mx-2">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    title: <%= assignment.title%>
+                                        </br>
+                                        description: <%= assignment.description%>
+                                            </br>
+                                            instructor: <%= assignment.author%>
+                                                </br>
+                                                Assignment CreatedAt: <%= assignment.createdAt%>
+                                                    </br>
+                                                    Due Deadline: <%= assignment.deadline%>
+                                                        <form action="/upload/<%= assignment.assigncode %>"
+                                                            method="post" enctype="multipart/form-data">
+                                                            <div class="custom-file mb-3">
+                                                                <input type="file" name="file" id="file1">
+                                                                <label for="file1" id="file-label"><small>Choose
+                                                                        file</small></label>
+                                                            </div>
+                                                            <input type="submit" id="submit-button" value="Submit">
+                                                        </form>
+                                                        <% if(files) { %>
+                                                            <ul>
+                                                                <% files.forEach(function(file) {%>
+                                                                    <% if (file.assigncode==assignment.assigncode) { %>
+                                                                        <% sub=sub+1 %>
+                                                                            <li> Your Last Submission:
+                                                                                <%= file.filename %>
+                                                                                    <a href="/download/<%= file._id %>"
+                                                                                        download> download
+                                                                                        submission</a>
+                                                                            </li>
+                                                                            <li>
+                                                                                The assignment was submitted: <%=
+                                                                                    get_time(assignment.deadline,file.updatedAt)
+                                                                                    %>
+                                                                            </li>
+                                                                            <li>
+                                                                                grade:
+                                                                                <% if(file.grade) { %>
+                                                                                    <%= file.grade %>
+
+                                                                                        <% } else { %>
+                                                                                            No Grade recieved
+                                                                                            <% } %>
+                                                                            </li>
+                                                                            <li>
+                                                                                feedback:
+                                                                                <% if(file.feedback=="" ) { %>
+                                                                                    No feedback recieved
+                                                                                    <% } else { %>
+                                                                                        <%= file.feedback %>
+                                                                                            <% } %>
+
+                                                                                                <% } %>
+                                                                                                    <%}) %>
+
+                                                            </ul>
                                                             <% } else { %>
-                                                                <%= file.feedback %>
-                                                                    <% } %>
+                                                                <p>No files to show</p>
+                                                                <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
 
-                                                                        <% } %>
-                                                                            <%}) %>
-
-                                        </ul>
-                                        <% } else { %>
-                                            <p>No files to show</p>
-                                            <% } %>
-            </div>
-            </div>
-            </div>
-            <% }) %>
-
-    <script>
-        document.getElementById("ass_count").innerHTML = `Number of Assignments: ${<%= assignments.length %>}`;
-        document.getElementById("sub_count").innerHTML = `Submitted Count: ${<%= sub %>}`;
-        document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub/assignments.length)*100 %>}%`;
-    </script>
-    <%- include("./partials/foot.ejs") %>
-</body>
+                            <script>
+                                document.getElementById("ass_count").innerHTML = `Number of Assignments: ${<%= assignments.length %>}`;
+        document.getElementById("sub_count").innerHTML = `Submitted Count: ${<%= sub %>} `;
+        document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub / assignments.length) * 100 %>}%`;
+                            </script>
+                            <%- include("./partials/foot.ejs") %>
+            </body>

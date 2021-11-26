@@ -5,9 +5,9 @@ const FileDataSchema = new mongoose.Schema(
     filename: { type: String, required: true },
     username: { type: String, required: true },
     feedback: { type: String, required: false },
-    grade: {type: Number},
+    grade: { type: Number },
     assigncode: { type: String, required: true },
-    dueTime: {type: String}
+    dueTime: { type: String },
   },
   { collection: "filesData", timestamps: true }
 );

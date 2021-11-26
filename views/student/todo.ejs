@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <%- include("./partials/head.ejs") %>
 
-<%- include("./partials/home.ejs") %>
+    <%- include("./partials/home.ejs") %>
 
-<body style="padding-top: 4em; background-color:white;">
-    <h2>Pending Assignments</h2>
-    <% a.forEach(function(assignment) { %>
-        <div class="card mb-3">
-            <div class="card-header">
-                <div class="card-title">
-        title: <%= assignment.title%>
-            </br>
-            Course: <%= assignment.coursecode%>
-                </br>
-                description: <%= assignment.description%>
-                    </br>
-                    instructor: <%= assignment.author%>
-                        </br>
-                        Assignment CreatedAt: <%= assignment.createdAt%>
-                            </br>
-                            Due Deadline: <%= assignment.deadline%>
-                                <form action="/upload/<%= assignment.assigncode %>" method="post"
-                                    enctype="multipart/form-data">
-                                    <div class="custom-file mb-3">
-                                        <input type="file" name="file" id="file1">
-                                        <label for="file1" id="file-label"><small>Choose file</small></label>
-                                    </div>
-                                    <input type="submit" id="submit-button" value="Submit">
-                                </form>
+        <body style="padding-top: 4em; background-color:white;">
+            <h2>Pending Assignments</h2>
+            <% a.forEach(function(assignment) { %>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div class="card-title">
+                            title: <%= assignment.title%>
+                                </br>
+                                Course: <%= assignment.coursecode%>
+                                    </br>
+                                    description: <%= assignment.description%>
+                                        </br>
+                                        instructor: <%= assignment.author%>
+                                            </br>
+                                            Assignment CreatedAt: <%= assignment.createdAt%>
+                                                </br>
+                                                Due Deadline: <%= assignment.deadline%>
+                                                    <form action="/upload/<%= assignment.assigncode %>" method="post"
+                                                        enctype="multipart/form-data">
+                                                        <div class="custom-file mb-3">
+                                                            <input type="file" name="file" id="file1">
+                                                            <label for="file1" id="file-label"><small>Choose
+                                                                    file</small></label>
+                                                        </div>
+                                                        <input type="submit" id="submit-button" value="Submit">
+                                                    </form>
+                        </div>
+                    </div>
                 </div>
-                </div>
-                </div>
-                                <% }) %>
-    <%- include("./partials/foot.ejs") %>
-</body>
+                <% }) %>
+                    <%- include("./partials/foot.ejs") %>
+        </body>

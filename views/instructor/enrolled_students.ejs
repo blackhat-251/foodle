@@ -1,9 +1,39 @@
-<body>
-    <h1>Course <%= course.name %></h1>
-    Enrolled Students:
-    <ul>
-    <% students.forEach(function(student){ %>
-        <li><%= student.name %></li>
-    <% }) %>
-    </ul> 
-</body>
+<!DOCTYPE html>
+<!-- <h1>Hello <%= user.name %>, your role is <%= user.role %>
+</h1> -->
+<!DOCTYPE html>
+<%- include("./partials/head.ejs") %>
+
+    <%- include("./partials/home.ejs") %>
+
+        <body style="padding-top: 4em; background-color:white;">
+            <h1>Course <%= course.name %>
+            </h1>
+
+            Enrolled Students:
+            <% if(students.length>0) {%>
+                <ul>
+                    <% students.forEach(function(student){ %>
+                        <li>
+                            <%= student.name %>
+                        </li>
+                        <% }) }else{%>
+                            </br>
+                            No Students Enrolled
+                            <% }%>
+
+                </ul>
+                </br></br>
+                <form action="/instructor/enroll_student/<%= course.coursecode %>" method="post">
+                    <div class="form-group">
+
+                        <label for="username">Enroll Student with username : </label>
+                        <input type="text" name="username" default="username">
+                    </div>
+                    <input type="submit" value="Enroll">
+                </form>
+                <a href="/instructor/inviteall/<%= course.coursecode %>">Invite</a> all students
+                for the course through mail
+                <%- include("./partials/foot.ejs") %>
+
+        </body>

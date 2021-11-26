@@ -1,90 +1,95 @@
-<h1>Your chat with <%= chatWith.username %></h1>
+<h1>Your chat with <%= chatWith.username %>
+</h1>
 <hr>
-<div id = "chat">
-<% msgs.forEach(function(msg){ %>
-    <% if(msg.sender == chatWith.username){ %>
-        <div class="received-msg">
-    <% } else { %>
-        <div class="sent-msg">
-    <% } %>
-            <h3><%= msg.sender %></h3>
-            <h4><%= msg.content %></h4>
-        </div>
-    <hr>
-<% }) %>
-</div>
+<div id="chat">
+    <% msgs.forEach(function(msg){ %>
+        <% if(msg.sender==chatWith.username){ %>
+            <div class="received-msg">
+                <% } else { %>
+                    <div class="sent-msg">
+                        <% } %>
+                            <h3>
+                                <%= msg.sender %>
+                            </h3>
+                            <h4>
+                                <%= msg.content %>
+                            </h4>
+                    </div>
+                    <hr>
+                    <% }) %>
+            </div>
 
-<input id="msgContent"> <button onclick="sendMsg()">Send</button>
+            <input id="msgContent"> <button onclick="sendMsg()">Send</button>
 
-<script>
-    function sendMsg(){
-        let msgContent = document.getElementById("msgContent").value;
+            <script>
+                function sendMsg() {
+                    let msgContent = document.getElementById("msgContent").value;
 
-        fetch("/chat/sendmsg/<%= chatWith.username %>",{
-            method: "post",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({"content":msgContent})
-        }).then((resp)=>{
-            resp.text().then((text)=>{
-                console.log(text);
+                    fetch("/chat/sendmsg/<%= chatWith.username %>", {
+                        method: "post",
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ "content": msgContent })
+                    }).then((resp) => {
+                        resp.text().then((text) => {
+                            console.log(text);
 
-                if(text == "OK"){
-                    addMsg(msgContent, "<%= user.username %>", true);
-                }else{
-                    alert("Message sending failed, please check your internet connection.")
+                            if (text == "OK") {
+                                addMsg(msgContent, "<%= user.username %>", true);
+                            } else {
+                                alert("Message sending failed, please check your internet connection.")
+                            }
+                        })
+                    })
                 }
-            })
-        })
-    }
 
-    function addMsg(content, sender, isOwnMsg){
-        let divtag = document.createElement("div")
-        if(isOwnMsg){
-            divtag.className = "sent-msg";
-        }else{
-            divtag.className = "received-msg";
-        }
+                function addMsg(content, sender, isOwnMsg) {
+                    let divtag = document.createElement("div")
+                    if (isOwnMsg) {
+                        divtag.className = "sent-msg";
+                    } else {
+                        divtag.className = "received-msg";
+                    }
 
-        document.getElementById("chat").append(divtag)
+                    document.getElementById("chat").append(divtag)
 
-        divtag.innerHTML = `<h3>${sender}</h3><h4>${content}</h4><hr>`;
-    }
-
-    function checkNewMsgs(){
-        let recievedMsgs = document.getElementsByClassName("received-msg").length
-        console.log(recievedMsgs);
-
-        fetch("/chat/noofmsgs/<%= chatWith.username %>")
-        .then((resp)=>{
-            resp.text().then((text)=>{
-                if( parseInt(text) > recievedMsgs){
-                    getMsgs(parseInt(text) - recievedMsgs);
+                    divtag.innerHTML = `<h3>${sender}</h3><h4>${content}</h4><hr>`;
                 }
-            })
-        })
-    }
 
-    function getMsgs(noOfMsgs){
-        fetch("/chat/getmsg/<%= chatWith.username %>",{
-            method: "post",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({"n":noOfMsgs})
-        }).then((resp)=>{
-            resp.text().then((text)=>{
-                let json = JSON.parse(text);
+                function checkNewMsgs() {
+                    let recievedMsgs = document.getElementsByClassName("received-msg").length
+                    console.log(recievedMsgs);
 
-                for(let i=0; i < json.length; i++){
-                    addMsg(json[i].content, json[i].sender, false);
+                    fetch("/chat/noofmsgs/<%= chatWith.username %>")
+                        .then((resp) => {
+                            resp.text().then((text) => {
+                                if (parseInt(text) > recievedMsgs) {
+                                    getMsgs(parseInt(text) - recievedMsgs);
+                                }
+                            })
+                        })
                 }
-            })
-        })
-    }
 
-    setInterval(checkNewMsgs,2000);
-</script>
+                function getMsgs(noOfMsgs) {
+                    fetch("/chat/getmsg/<%= chatWith.username %>", {
+                        method: "post",
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ "n": noOfMsgs })
+                    }).then((resp) => {
+                        resp.text().then((text) => {
+                            let json = JSON.parse(text);
+
+                            for (let i = 0; i < json.length; i++) {
+                                addMsg(json[i].content, json[i].sender, false);
+                            }
+                        })
+                    })
+                }
+
+                setInterval(checkNewMsgs, 2000);
+            </script>

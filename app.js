@@ -8,8 +8,8 @@ var jwt_verify = require("./middleware/jwt");
 var indexRouter = require("./routes/index");
 var studentRouter = require("./routes/student");
 var instructorRouter = require("./routes/instructor");
-var flash = require('connect-flash');
-var session = require('express-session')
+var flash = require("connect-flash");
+var session = require("express-session");
 const upload = require("express-fileupload");
 var app = express();
 
@@ -28,8 +28,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Global variables
 app.use(function (req, res, next) {
-  res.locals.message = {}
-  next()
+  res.locals.message = {};
+  next();
 });
 app.use(jwt_verify);
 

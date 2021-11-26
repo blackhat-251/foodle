@@ -1,13 +1,13 @@
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET;
 const User = require("../models/user");
-var format = require('util').format;
-var isArray = require('util').isArray;
+var format = require("util").format;
+var isArray = require("util").isArray;
 
 async function jwt_verify(req, res, next) {
   //res.locals.message = { "error": "","success":"" }
   //req.flash = _flash
-  const exceptions = ["/", "/login", "/register"];
+  const exceptions = ["/login", "/register"];
   if (exceptions.includes(req.path)) {
     return next();
   }
@@ -32,13 +32,13 @@ async function jwt_verify(req, res, next) {
     console.log(e);
     return res.redirect("/login");
   }
-  console.log(req.user)
+  console.log(req.user);
   if (req.user) {
-    if (req.path.includes("/student") && req.user.role === 'instructor') {
-      return res.send("Unauthorized access")
+    if (req.path.includes("/student") && req.user.role === "instructor") {
+      return res.send("Unauthorized access");
     }
-    if (req.path.includes("/instructor") && req.user.role === 'student') {
-      return res.send("Unauthorized access")
+    if (req.path.includes("/instructor") && req.user.role === "student") {
+      return res.send("Unauthorized access");
     }
   }
   return next();
