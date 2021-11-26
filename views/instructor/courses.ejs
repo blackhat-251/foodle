@@ -1,50 +1,58 @@
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
 
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+<%- include("./partials/head.ejs") %>
 
-<body>
-    <p>COURSES</p>
+    <%- include("./partials/home.ejs") %>
 
-    <% if(a) { %>
-        <p>INIF</p>
-        <% a.forEach(function(course) {%>
-            <div class="card mb-3">
-                <div class="card-header">
-                    <div class="card-title">
-                        Title = <%= course.name %>
-                            </br>
-                            Description = <%= course.description %>
-                                </br>
-                                Code = <%= course.coursecode %>
-                                    </br>
-                                    <a href="/instructor/assignments/<%= course.coursecode %>">View all assignments</a>
-                                    </br>
-                                    <a href="/instructor/inviteall/<%= course.coursecode %>">Invite</a> all students
-                                    for the course through mail
-                                    </br>
-                                    <a href="/instructor/announcements/<%= course.coursecode %>">View all announcement</a>
-                                    </br>
-                                    <a href="/forum/<%= course.coursecode %>">View forum</a>
+        <body style="padding-top: 4em; background-color:white;">
+            <div class="container-fluid">
+                <h2>Enrolled Courses</h2>
+                <div class="row">
+                    <% if(a) { %>
+                        <% a.forEach(function(course) {%>
+                            <div class="col-md-5 m-2">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <div class="card-title">
+                                            Title = <%= course.name %>
+                                                </br>
+                                                Description = <%= course.description %>
+                                                    </br>
+                                                    Code = <%= course.coursecode %>
+                                                        </br>
+                                                        <!-- <div class="progress" style="width: 60%;">
+                                        <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<%=course.completed%>" aria-valuemin="0" aria-valuemax="100" style="width: <%= course.completed%>%"><%=course.completed%>%</div>
+                                    </div> -->
+                                                        <a href="/instructor/assignments/<%= course.coursecode %>">View
+                                                            all assignments</a>
+                                                        </br>
+                                                        <a href="/instructor/announcements/<%= course.coursecode %>">View
+                                                            all announcements</a>
+                                                        </br>
+                                                        <a
+                                                            href="/instructor/enrolled_students/<%= course.coursecode %>">All
+                                                            enrolled students</a>
+                                                        </br>
+                                                        <a 
+                                                            href="/forum/<%= course.coursecode %>">View forum</a>
+                                                        </br>
+                                                        <a
+                                                            href="/instructor/inviteall/<%= course.coursecode %>">Invite</a>
+                                                        all students
+                                                        for the course through mail
+                                                        </br>
 
-                                </br>
-                                <form action="/instructor/enroll_student/<%= course.coursecode %>" method="post">
-                                    <label for="username">Enroll Student with username : </label>
-                                    <input type="text" name="username" default="username">
-                                    <input type="submit" value="Enroll">
-                                </form>
-                                </br>
-                                <a href="/instructor/enrolled_students/<%= course.coursecode %>">All enrolled students</a>
-                                    <!-- <a href="/instructor/create_assignment/<%= course.coursecode %>">Create Assignments</a> -->
-                    </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%}) %>
+                                <% } else { %>
+                                    <p>No Courses to show</p>
+                                    <% } %>
                 </div>
+
+
             </div>
-            <%}) %>
-                <% } else { %>
-                    <p>No Courses to show</p>
-                    <% } %>
-                        <a href="/instructor/create_course">Create Course</a>
-</body>
+            <%- include("./partials/foot.ejs") %>
+        </body>

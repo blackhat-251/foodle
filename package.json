@@ -1,12 +1,12 @@
 {
-  "name": "loodle",
+  "name": "foodle",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www",
-    "serverstart": "DEBUG=file_transfer:* npm run devstart",
+    "serverstart": "DEBUG=foodle:* npm run devstart",
     "pretty": "prettier --write \"./**/*.{js,jsx,json,ejs,html}\"",
     "//": "npm run serverstart"
   },
@@ -43,5 +43,8 @@
   "license": "ISC",
   "devDependencies": {
     "standard": "^16.0.4"
+  },
+  "engines": {
+    "node": "16.10.0"
   }
 }

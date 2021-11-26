@@ -8,14 +8,15 @@
     <input type="password" id="password" name="password">
     <button>Login</button>
     <% if(message) {%>
-        <h4><%= message.error %></h4>
-        <h4><%= message.success %></h4>
-    <% }%>
+        <h4>
+            <%= message.error %>
+        </h4>
+        <h4>
+            <%= message.success %>
+        </h4>
+        <% }%>
 </form>
 <ul>
     <li><a href="/">Home</a></li>
     <li><a href="/register">SignUp</a></li>
 </ul>
-
-
-

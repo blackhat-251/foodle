@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <%- include("./partials/head.ejs") %>
 
-<%- include("./partials/home.ejs") %>
+    <%- include("./partials/home.ejs") %>
 
-<body style="padding-top: 4em; background-color:white;">
-    <h2>My submissions</h2>
-    <% if(files) { %>
-        <% files.forEach(function(file) {%>
-            <div class="card mb-3">
-                <div class="card-header">
-                    <div class="card-title">
-                        <%= file.filename %> submitted for <%= file.assigncode %>
+        <body style="padding-top: 4em; background-color:white;">
+            <h2>My submissions</h2>
+            <% if(files) { %>
+                <% files.forEach(function(file) {%>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <%= file.filename %> submitted for <%= file.assigncode %>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <a href="/download/<%= file.filename %>" download>download submission</a>
+
+                        </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <a href="/download/<%= file.filename %>" download>download submission</a>
-
-                </div>
-            </div>
-            <%}) %>
-                <% } else { %>
-                    <p>No files to show</p>
-                    <% } %>
-    <%- include("./partials/foot.ejs") %>
-</body>
+                    <%}) %>
+                        <% } else { %>
+                            <p>No files to show</p>
+                            <% } %>
+                                <%- include("./partials/foot.ejs") %>
+        </body>

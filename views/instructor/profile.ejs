@@ -1,19 +1,51 @@
 <!DOCTYPE html>
-<!-- <h1>Hello <%= user.name %>, your role is <%= user.role %></h1> -->
+<%- include("./partials/head.ejs") %>
 
-<%- include("../home.ejs") %>
+    <%- include("./partials/home.ejs") %>
 
-<body>
-    <h2>profile</h2>
+        <body style="padding-top: 4em; background-color:white;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <h2>profile</h2>
+                        <div class="row">
+                            <% for(var i=0; i < 1; i++) { %>
+                                <div class="col-md-auto m-2">
+                                    <div class="card" style="width:30rem;" id="explore-card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h5 class="card-title">
+                                                        <%= user.name %>
+                                                    </h5>
+                                                    <h6 class="card-subtitle mb-2 text-muted">username: <%=
+                                                            user.username %>
+                                                    </h6>
+                                                    <h6 class="card-subtitle mb-2 text-muted">
+                                                        <%= user.email %>
+                                                    </h6>
+                                                </div>
+                                                <div class="col"><img src="/images/blackhat.png" style="width:100%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <ul>
+                            <% for(var i=0; i < users.length; i++) { %>
+                                <li>
+                                    <%= users[i].name %>
+                                </li>
+                                <% } %>
+                        </ul>
+                    </div>
+                </div>
 
+            </div>
 
-    <ul>
-        <!-- <li><a href="/instructor/assignment">View your created assignments</a></li> -->
-        <li><a href="/instructor/courses">View your created courses</a></li>
-        <li><a href="/update_password">change password</a></li>
-
-        <li><a href="/editprofile">Edit Profile</a></li>
-        <li><a href="/logout">Logout</a></li>
-    </ul>
-
-</body>
+            <%- include("./partials/foot.ejs") %>
+        </body>

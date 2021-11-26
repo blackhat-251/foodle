@@ -7,7 +7,6 @@ const jwt = require("jsonwebtoken");
 const FileData = require("../models/file_data");
 const Assign = require("../models/assignment");
 const Course = require("../models/course");
-
 const math = require("mathjs");
 const { identityDependencies } = require("mathjs");
 const uri = process.env.uri;
@@ -18,13 +17,26 @@ mongoose.connect(uri);
 router.get("/", (req, res) => {
   res.redirect("/instructor/profile");
 });
-router.get("/profile", (req, res) => {
-  return res.render("instructor/profile", { req: req, user: req.user });
+router.get("/profile", async (req, res) => {
+  const users = await User.find();
+  var x = [];
+  users.forEach((obj) => {
+    x.push({ name: obj.name });
+  });
+  //console.log(x);
+  return res.render("instructor/profile", {
+    req: req,
+    user: req.user,
+    users: x,
+  });
 });
 
 router.all("/create_assignment/:code", async (req, res) => {
   if (req.method == "GET") {
-    return res.render("instructor/create_assgn", { user: req.user, coursecode: req.params.code});
+    return res.render("instructor/create_assgn", {
+      user: req.user,
+      coursecode: req.params.code,
+    });
   }
   try {
     const asscode = math.random().toString(36).slice(2).substring(0, 5);
@@ -34,7 +46,7 @@ router.all("/create_assignment/:code", async (req, res) => {
       description: req.body.description,
       assigncode: asscode,
       coursecode: req.params.code,
-      deadline: req.body.deadline
+      deadline: req.body.deadline,
     });
     console.log("Assignment created ", response);
 
@@ -55,8 +67,10 @@ router.all("/create_course", async (req, res) => {
   if (req.method == "GET") {
     return res.render("instructor/create_course", { user: req.user });
   }
+  var c = "";
   try {
     const code = math.random().toString(36).slice(2).substring(0, 5);
+    c = code;
     const response = await Course.create({
       creator: req.user.username,
       name: req.body.name,
@@ -70,7 +84,7 @@ router.all("/create_course", async (req, res) => {
     console.log(error);
     return res.send("Some error occured, please try again.");
   }
-  res.redirect("/instructor/");
+  res.redirect(`/instructor/enrolled_students/${c}`);
 });
 
 router.get("/courses", async (req, res) => {
@@ -107,7 +121,7 @@ router.get("/assignments/:code", async (req, res) => {
   return res.render("instructor/assignments", {
     a: assignments,
     user: req.user,
-    coursecode: req.params.code
+    coursecode: req.params.code,
   });
 });
 
@@ -122,26 +136,28 @@ router.get("/announcements/:code", async (req, res) => {
   return res.render("instructor/announcement", {
     a: anncodes,
     user: req.user,
-    coursecode: req.params.code
+    coursecode: req.params.code,
+    course: course,
   });
 });
 
-router.all("/create_announcement/:code", async (req,res)=>{
-  if(req.method === "GET")
-  {
-    return res.render("instructor/create_announcement", {user: req.user, coursecode: req.params.code})
+router.all("/create_announcement/:code", async (req, res) => {
+  if (req.method === "GET") {
+    return res.render("instructor/create_announcement", {
+      user: req.user,
+      coursecode: req.params.code,
+    });
   }
   var course = await Course.findOne({ coursecode: req.params.code });
   course.announcements.push({
-    "title" : req.body.title,
-    "body" : req.body.body,
-    "date": new Date()
-  })
-  await course.save()
+    title: req.body.title,
+    body: req.body.body,
+    date: new Date(),
+  });
+  await course.save();
 
-  return res.redirect(`/instructor/announcements/${req.params.code}`)
-
-})
+  return res.redirect(`/instructor/announcements/${req.params.code}`);
+});
 
 router.get("/assignment", async (req, res) => {
   var assigncodes = req.user.assignments;
@@ -189,7 +205,7 @@ router.get("/inviteall/:coursecode", async (req, res) => {
     return res.send("User Not Authorized");
   }
   const students = await User.find({ role: "student" });
-  const course = await Course.findOne({coursecode: req.params.coursecode})
+  const course = await Course.findOne({ coursecode: req.params.coursecode });
 
   students.forEach(async (student) => {
     let maildetails = {
@@ -206,31 +222,33 @@ router.get("/inviteall/:coursecode", async (req, res) => {
 
 router.post("/enroll_student/:coursecode", async (req, res) => {
   const student_username = req.body.username;
-  const student = await User.findOne({username: student_username});
-  if(!student){
-    res.send("No such student exists")
+  const student = await User.findOne({ username: student_username });
+  if (!student) {
+    res.send("No such student exists");
   }
-  if((!student.courses)||!student.courses.includes(req.params.coursecode)){
+  if (!student.courses || !student.courses.includes(req.params.coursecode)) {
     student.courses.push(req.params.coursecode);
     await student.save();
-    return res.redirect(`/instructor/enrolled_students/${req.params.coursecode}`)
+    return res.redirect(
+      `/instructor/enrolled_students/${req.params.coursecode}`
+    );
   }
   return res.redirect("back");
 });
 
 router.get("/enrolled_students/:coursecode", async (req, res) => {
   const users = await User.find();
-  const course = await Course.findOne({coursecode: req.params.coursecode})
-  const enrolled_students = users.filter((user)=>{
-    return (user.courses.includes(req.params.coursecode) && user.role==="student")
-  })
+  const course = await Course.findOne({ coursecode: req.params.coursecode });
+  const enrolled_students = users.filter((user) => {
+    return (
+      user.courses.includes(req.params.coursecode) && user.role === "student"
+    );
+  });
   return res.render("instructor/enrolled_students", {
     user: req.user,
     students: enrolled_students,
-    course: course
-  })
-})
-
-
+    course: course,
+  });
+});
 
 module.exports = router;
