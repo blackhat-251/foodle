@@ -8,9 +8,10 @@ const FileData = require("../models/file_data");
 const Assign = require("../models/assignment");
 const Course = require("../models/course");
 const math = require("mathjs");
-const { identityDependencies } = require("mathjs");
+const { identityDependencies, electronMassDependencies } = require("mathjs");
 const uri = process.env.uri;
 const sendmail = require("../services/mailer");
+const { render } = require("pug");
 
 mongoose.connect(uri);
 
@@ -185,7 +186,7 @@ router.get("/view_submission/:code", async (req, res) => {
   const f = await FileData.find({ assigncode: req.params.code });
   //console.log(f);
   const assignment = await Assign.findOne({ assigncode: req.params.code });
-  const course = await Course.findOne({coursecode: assignment.coursecode})
+  const course = await Course.findOne({ coursecode: assignment.coursecode })
   //console.log(course)
   return res.render("instructor/view_submission", {
     user: req.user,
@@ -255,5 +256,43 @@ router.get("/enrolled_students/:coursecode", async (req, res) => {
     course: course,
   });
 });
+
+router.all("/assignta/:coursecode", async (req, res) => {
+  const course = await Course.findOne({ coursecode: req.params.coursecode });
+  if (req.method === "GET") {
+    const tas = course.ta_username
+    var ta_uname = []
+    const users = await User.find();
+    for (var ta of tas) {
+      ta_uname.push(ta.username)
+    }
+    const ta_user = users.filter((user) => {
+      return ta_uname.includes(user.username)
+    })
+    res.render('instructor/tas', 
+    { course: course, 
+      tas_name: ta_user, 
+      tas_priv: course.ta_username, 
+      user: req.user })
+  }
+  else {
+    const username = req.body.username
+    const announcement = req.body.announcement ? true : false
+    const grading = req.body.grading ? true : false
+    const assignment = req.body.assignment ? true : false
+    // console.log(assignment)
+    // console.log(grading)
+    // console.log(announcement)
+    course.ta_username.push({
+      username: username,
+      announcement: announcement,
+      grading: grading,
+      assignment: assignment
+    })
+    await course.save()
+    console.log(course)
+    return res.redirect('back')
+  }
+})
 
 module.exports = router;
