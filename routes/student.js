@@ -20,7 +20,7 @@ router.get("/profile", async (req, res) => {
   users.forEach((obj) => {
     x.push({ name: obj.name });
   });
-  console.log(x);
+ // console.log(x);
 
   return res.render("student/profile", { user: req.user, users: x });
 });

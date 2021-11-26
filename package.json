@@ -43,5 +43,8 @@
   "license": "ISC",
   "devDependencies": {
     "standard": "^16.0.4"
+  },
+  "engines": {
+    "node": "16.10.0"
   }
 }
