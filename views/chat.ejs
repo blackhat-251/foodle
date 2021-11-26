@@ -25,7 +25,7 @@
                                         <%= msg.content %>
                                             </br>
                                     </div>
-                                    <span style="float: right;">
+                                    <span class="other">
                                         <%= msg.time %>
                                     </span>
                             </div>
@@ -68,7 +68,7 @@
 
                                 document.getElementById("chat").append(divtag)
 
-                                divtag.innerHTML = `<img src="/images/blackhat.png"><b>${sender}</b></br>${content}</br><span style="float: right;">${new Date().toLocaleString()}</span>`;
+                                divtag.innerHTML = `<img src="/images/blackhat.png" class="inlineIcon"><div class="otherBubble other"><b>${sender}</b></br>${content}</br></div><span class="other">${new Date().toLocaleString()}</span>`;
                             }
 
                             function checkNewMsgs() {
