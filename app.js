@@ -9,6 +9,7 @@ var indexRouter = require("./routes/index");
 var studentRouter = require("./routes/student");
 var instructorRouter = require("./routes/instructor");
 var flash = require('connect-flash');
+var session = require('express-session')
 const upload = require("express-fileupload");
 var app = express();
 
@@ -20,21 +21,22 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(upload());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(require("express-session")({
-  secret: "secret",
-  resave: true,
-  saveUninitialized: true
-}));
-app.use(flash());
+// app.use(cookieParser('secretString'));
+// app.use(session({cookie: { maxAge: 60000 }}));
+// app.use(flash());
+
+// Global variables
 app.use(function (req, res, next) {
-  res.locals.message = req.flash();
-  next();
+  res.locals.message = {}
+  next()
 });
 app.use(jwt_verify);
 
-
+// app.use(function (req, res, next) {
+//   res.locals.message = req.flash();
+//   next();
+// });
 app.use("/", indexRouter);
 app.use("/student", studentRouter);
 app.use("/instructor", instructorRouter);
@@ -46,7 +48,7 @@ app.use(function (req, res, next) {
 // error handler
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
-  res.locals.message = err.message;
+  //res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
   // render the error page

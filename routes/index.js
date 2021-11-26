@@ -26,15 +26,13 @@ router.all("/login", async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     if (!username || typeof username !== "string") {
-      req.flash("error", "Empty username")
-      return res.redirect("/login");
+      return res.render("login",{message : {error: "Empty username"}});
     }
 
     const user = await User.findOne({ username }).lean();
 
     if (!user) {
-      req.flash("error", "No such user exists")
-      return res.redirect("/login");
+      return res.render("login", {message : {error: "No such user exists"}});
     }
 
     if (await bcrypt.compare(password, user.password)) {
@@ -55,8 +53,7 @@ router.all("/login", async (req, res) => {
       if (user.role == "instructor") return res.redirect("/instructor/profile");
       return res.redirect("/student/profile");
     } else {
-      req.flash("error", "Invalid credentials")
-      return res.redirect("/login");
+      return res.render("login", {message:{error:"Invalid credentials"}});
     }
   } else {
     return res.status(405).send("Method not allowed");
@@ -73,8 +70,8 @@ router.all("/register", async (req, res) => {
     const name = req.body.name;
     const role = req.body.role;
     if (!username || typeof username !== "string") {
-      req.flash("error", "Empty username")
-      return res.redirect("/register");
+
+      return res.render("register",{message: {error: "Empty username"}});
     }
     try {
       var user = new User();
@@ -87,13 +84,11 @@ router.all("/register", async (req, res) => {
         if (err) {
           console.log(err);
           if (err.code === 11000) {
-            req.flash("error", "Username already exists")
-            return res.redirect("/register");
+            return res.render("/register", {message : {error:"Username already exists"}});
           }
         }
         else {
-          req.flash("success", "User created successfully")
-          return res.redirect("/login");
+          return res.render("/login",{message : {success:"User created successfully"}} );
         }
       });
       console.log("User created successfully ");
@@ -112,19 +107,17 @@ router.all("/register", async (req, res) => {
 
 router.post("/update_password", async (req, res) => {
   if (!(await bcrypt.compare(req.body.old_pwd, req.user.password))) {
-    req.flash("error", "Your current password didnt match")
-    return res.redirect("/update_password");
+    return res.render("/update_password",{message : {error:"Your current password didnt match"}});
   }
   const password = await bcrypt.hash(req.body.new_pwd, 10);
   if ((await bcrypt.compare(req.body.old_pwd, password))) {
-    req.flash("error", "New password same as old")
-    return res.redirect("/update_password");
+    return res.render("/update_password",{message : {error:"New password same as old"}});
   }
 
   req.user.password = password;
   await req.user.save();
-  req.flash("success", "Password changed successfully")
-  return res.redirect("/update_password");
+  //req.flash("success", "Password changed successfully")
+  return res.render("/update_password",{message : {success:"Password changed successfully"}} );
 });
 
 router.get("/update_password", (req, res) => {
@@ -183,8 +176,7 @@ router.post("/editprofile", async (req, res) => {
   req.user.name = newname;
   req.user.email = newmail;
   await req.user.save();
-  req.flash("success", "Profile edited successfully")
-  return res.redirect("/editprofile");
+  return res.render("/editprofile",{message : {success:"Profile edited successfully"}} );
 });
 
 router.get("/editprofile", (req, res) => {

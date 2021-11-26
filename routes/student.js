@@ -9,14 +9,20 @@ const FileData = require("../models/file_data");
 const Assign = require("../models/assignment");
 const Course = require("../models/course");
 
-
 mongoose.connect(uri);
 router.get("/", (req, res) => {
   res.redirect("/student/profile");
 });
 
-router.get("/profile", (req, res) => {
-  return res.render("student/profile", { user: req.user });
+router.get("/profile", async (req, res) => {
+  const users = await User.find()
+  var x = []
+  users.forEach((obj) => {
+    x.push({ "name": obj.name })
+  })
+  console.log(x)
+
+  return res.render("student/profile", { user: req.user, users: x });
 });
 
 router.get("/view_submission", async (req, res) => {
@@ -56,30 +62,30 @@ router.post("/enroll_course", async (req, res) => {
   return res.redirect("/student/courses");
 });
 
-async function get_completion(courses,req) {
+async function get_completion(courses, req) {
   var course_list = []
   const f = await FileData.find({ username: req.user.username });
-  var all_subs = f.map((file) => {return file.assigncode})
-  courses.forEach(function(course){
+  var all_subs = f.map((file) => { return file.assigncode })
+  courses.forEach(function (course) {
     //Get all assignments -> Assignment count
     var ass_count = course.assignments.length
-    if(ass_count == 0){
+    if (ass_count == 0) {
       course_list.push({
-        course:course,
-        completed:0
+        course: course,
+        completed: 0
       })
       return;
     }
     //From all submissions, get count of submissions to this course
     var submissions = 0
-    all_subs.forEach(function(sub){
-      if(course.assignments.includes(sub)){
-        submissions+=1
+    all_subs.forEach(function (sub) {
+      if (course.assignments.includes(sub)) {
+        submissions += 1
       }
     })
     course_list.push({
-      course:course,
-      completed: Math.round((submissions/ass_count)*100)
+      course: course,
+      completed: Math.round((submissions / ass_count) * 100)
     })
   })
   //Return Array of {course,percentage}
@@ -91,7 +97,7 @@ router.get("/courses", async (req, res) => {
   const filtered_courses = await courses.filter((ass) => {
     return req.user.courses.includes(ass.coursecode);
   });
-  var completed_courses = await get_completion(filtered_courses,req);
+  var completed_courses = await get_completion(filtered_courses, req);
   console.log(completed_courses)
   return res.render("student/dashboard", {
     user: req.user,
@@ -120,7 +126,7 @@ router.get("/enroll/:coursecode", async (req, res) => {
 });
 
 router.get("/assignments/:coursecode", async (req, res) => {
-  const course = await Course.findOne({coursecode: req.params.coursecode})
+  const course = await Course.findOne({ coursecode: req.params.coursecode })
   const assignment = await Assign.find();
   const filtered_ass = await assignment.filter((ass) => {
     return course.assignments.includes(ass.assigncode);
@@ -143,27 +149,27 @@ router.get("/todo", async (req, res) => {
   });
 
   // console.log(filtered_courses)
-  
+
   //From each courses, get all the assignments
   var assigncodes = []
-  filtered_courses.forEach(function(course){
-    course.assignments.forEach(function(assignment){
+  filtered_courses.forEach(function (course) {
+    course.assignments.forEach(function (assignment) {
       assigncodes.push(assignment)
     })
   })
 
   //Get all assignments that the user has submitted, and add the ones not submitted to array to be displayed
   const f = await FileData.find({ username: req.user.username });
-  var all_subs = f.map((file) => {return file.assigncode}) //List of codes of all submitted assignments
+  var all_subs = f.map((file) => { return file.assigncode }) //List of codes of all submitted assignments
 
   const all_assignments = await Assign.find();
-  const todo_assignments = all_assignments.filter(function(assignment){
-    return ((!all_subs.includes(assignment.assigncode))&&req.user.courses.includes(assignment.coursecode)); //If the assignment has not been submitted
+  const todo_assignments = all_assignments.filter(function (assignment) {
+    return ((!all_subs.includes(assignment.assigncode)) && req.user.courses.includes(assignment.coursecode)); //If the assignment has not been submitted
   })
 
   //Sort the array with respect to time
-  todo_assignments.sort((a,b)=>{
-    return (a.deadline-b.deadline);
+  todo_assignments.sort((a, b) => {
+    return (a.deadline - b.deadline);
   })
 
   return res.render("student/todo", {
