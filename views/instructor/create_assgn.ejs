@@ -1,6 +1,10 @@
+
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
+<%- include("./partials/head.ejs") %>
+
+    <%- include("./partials/home.ejs") %>
+
+        <body style="padding-top: 4em; background-color:white;">
 <h2>create assignment</h2>
 <form action="/instructor/create_assignment/<%= coursecode %>" method="post">
     <label for="title">Title</label>
@@ -9,6 +13,11 @@
     <input type="text" name="description">
     <label for="deadline">Deadline</label>
     <input type="datetime-local" name="deadline">
+    <label for="weightage">Weightage(0-100)%</label>
+    <input type="number" name="weightage" min="0" max="100" default="0">
     <!-- <input type="file" name="file"> -->
     <input type="submit" value="Button">
 </form>
+<%- include("./partials/foot.ejs") %>
+
+</body>

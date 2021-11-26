@@ -1,53 +1,62 @@
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
+<%- include("./partials/head.ejs") %>
 
-<head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-</head>
+    <%- include("./partials/home.ejs") %>
 
-<body>
+        <head>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        </head>
 
-    <% if(a) { %>
-        <% a.forEach(function(assign) {%>
-            <div class="card mb-3">
-                <div class="card-header">
-                    <div class="card-title">
-                        Title = <%= assign.title %>
-                            </br>
-                            Description = <%= assign.description %>
-                                </br>
-                                Code = <%= assign.assigncode %>
+        <body>
+            <h2>Assignments : Course <%= course.name %>
+            </h2>
+
+            <% if(a) { %>
+                <% a.forEach(function(assign) {%>
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <div class="card-title">
+                                Title = <%= assign.title %>
                                     </br>
-                                    CreatedAt = <%= assign.createdAt %>
+                                    Description = <%= assign.description %>
                                         </br>
-                                        Due Deadline = <%= assign.deadline %>
-                                            <!-- </br>
+                                        Code = <%= assign.assigncode %>
+                                            </br>
+                                            CreatedAt = <%= assign.createdAt %>
+                                                </br>
+                                                Due Deadline = <%= assign.deadline %>
+                                                    <!-- </br>
                          ModifiedAt = <%= assign.updatedAt %> -->
-                                            </br>
-                                            <a href="/instructor/view_submission/<%= assign.assigncode %>">View
-                                                submissions</a>
-                                            </br>
-                                            <a href="/download_all/<%= assign.assigncode %>">Download
-                                                all submissions</a>
-                                            </br>
-                                            Upload CSV downloaded from above link</br>
-                                            <form action="/uploadcsv/<%= assign.assigncode %>" method="post"
-                                                enctype="multipart/form-data">
-                                                <div class="custom-file mb-3">
-                                                    <input type="file" name="file" id="file1">
-                                                    <label for="file1" id="file-label">Choose file</label>
-                                                </div>
-                                                <input type="submit" id="submit-button" value="Submit">
-                                            </form>
+                                                    </br>
+                                                    Weightage(in %) = <%= assign.weightage %>
+                                                        </br>
+                                                        <a href="/instructor/view_submission/<%= assign.assigncode %>">View
+                                                            submissions</a>
+                                                        </br>
+                                                        <a href="/download_all/<%= assign.assigncode %>">Download
+                                                            all submissions</a>
+                                                    
+                                                        </br>
+                                                        </br>
+                                                        Upload graded CSV downloaded from above link</br>
+                                                        <form action="/uploadcsv/<%= assign.assigncode %>" method="post"
+                                                            enctype="multipart/form-data">
+                                                            <div class="custom-file mb-3">
+                                                                <input type="file" name="file" id="file1">
+                                                                <label for="file1" id="file-label">Choose file</label>
+                                                            </div>
+                                                            <input type="submit" id="submit-button" value="Submit">
+                                                        </form>
 
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <%}) %>
-                <% } else { %>
-                    <p>No assignments to show</p>
-                    <% } %>
+                    <%}) %>
+                        <% } else { %>
+                            <p>No assignments to show</p>
+                            <% } %>
 
-                        <a href="/instructor/create_assignment/<%= coursecode %>">Create Assignment</a>
-</body>
+                                <a href="/instructor/create_assignment/<%= coursecode %>">Create Assignment</a>
+                                <%- include("./partials/foot.ejs") %>
+
+        </body>

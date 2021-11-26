@@ -1,39 +1,88 @@
 <!DOCTYPE html>
-<h1>Hello <%= user.name %>, your role is <%= user.role %>
-</h1>
+<%- include("./partials/head.ejs") %>
 
-<h2>
-    <%= assignment.title %>
-</h2>
+    <%- include("./partials/home.ejs") %>
 
-<body>
-    <h2>Submissions </h2>
-    <% if(files) { %>
-        <ol>
-            <% files.forEach(function(file) {%>
-                <li>
-                    </br>
-                    <%= file.filename %>
-                        </br>
-                        Submitted by: <%= file.username %>
-                            </br> download link:
-                            <a href="/download/<%= file._id %>" download>
-                                <%= file.filename %>
-                            </a>
-                            </br>
-                            Last given feedback: <%= file.feedback %></br> grade: <%= file.grade %> </br>at time <%=
-                                        file.updatedAt %>
-                                        <form action="/instructor/feedback/<%= file._id %>" method="post">
-                                            <label for="title">Feedback</label>
-                                            <input type="text" name="feedback">
-                                            <label for="title">Grade</label>
-                                            <input type="number" name="grade" min="0" max="100" default="0">
-                                            <input type="submit" value="Submit">
-                                        </form>
-                </li>
-                <% }) %>
-        </ol>
-        <% } else { %>
-            <p>No files to show</p>
-            <% } %>
-</body>
+        <body style="padding-top: 4em; background-color:white;">
+
+            <h2>
+                <%= assignment.title %> for course : <%= course.name %>
+            </h2>
+
+            <% function get_time(date1, date2) { var diff=(date1 - date2) / (1000 * 60 * 60 * 24); //In days var time;
+                if (Math.abs(diff)> 1) {
+                time = Math.floor(Math.abs(diff)).toString();
+                if (diff > 0) {
+                return (time + " days early");
+                }
+                else {
+                return (time + " days late");
+                }
+                }
+                diff *= 24; //In hours
+                if (Math.abs(diff) > 1) {
+                time = Math.floor(Math.abs(diff)).toString();
+                if (diff > 0) {
+                return (time + " hours early");
+                }
+                else {
+                return (time + " hours late");
+                }
+                }
+                diff *= 60; //In mins
+                if (Math.abs(diff) > 1) {
+                time = Math.floor(Math.abs(diff)).toString();
+                if (diff > 0) {
+                return (time + " minutes early");
+                }
+                else {
+                return (time + " minutes late");
+                }
+                }
+                diff *= 60; //In seconds
+                time = Math.floor(Math.abs(diff)).toString();
+                if (diff > 0) {
+                return (time + " minutes early");
+                }
+                else {
+                return (time + " minutes late");
+                }
+                }
+                %>
+
+                <h2>Submissions </h2>
+                <% if(files) { %>
+                    <ol>
+                        <% files.forEach(function(file) {%>
+                            <li>
+                                </br>
+                                Filename: <%= file.filename %>
+                                    </br>
+                                    Submitted by: <%= file.username %>
+                                        </br> download link:
+                                        <a href="/download/<%= file._id %>" download>
+                                            <%= file.filename %>
+                                        </a>
+                                        </br>
+                                        Last given feedback: <%= file.feedback %></br>
+                                            Last given grade: <%= file.grade %> </br>at time <%= file.updatedAt %>
+                                                    </br>
+                                                    The assignment was submitted: <%=
+                                                        get_time(assignment.deadline,file.updatedAt) %>
+                                                        <form action="/instructor/feedback/<%= file._id %>"
+                                                            method="post">
+                                                            <label for="title">Feedback</label>
+                                                            <input type="text" name="feedback">
+                                                            <label for="title">Grade</label>
+                                                            <input type="number" name="grade" min="0" max="100"
+                                                                default="0">
+                                                            <input type="submit" value="Submit">
+                                                        </form>
+                            </li>
+                            <% }) %>
+                    </ol>
+                    <% } else { %>
+                        <p>No files to show</p>
+                        <% } %>
+        </body>
+        <%- include("./partials/foot.ejs") %>

@@ -39,7 +39,7 @@ router.all("/create_assignment/:code", async (req, res) => {
     });
   }
   try {
-    const asscode = math.random().toString(36).slice(2).substring(0, 5);
+    const asscode = math.random().toString(36).slice(2).substring(0, 5).toUpperCase();
     const response = await Assign.create({
       author: req.user.username,
       title: req.body.title,
@@ -47,6 +47,7 @@ router.all("/create_assignment/:code", async (req, res) => {
       assigncode: asscode,
       coursecode: req.params.code,
       deadline: req.body.deadline,
+      weightage: req.body.weightage,
     });
     console.log("Assignment created ", response);
 
@@ -69,7 +70,7 @@ router.all("/create_course", async (req, res) => {
   }
   var c = "";
   try {
-    const code = math.random().toString(36).slice(2).substring(0, 5);
+    const code = math.random().toString(36).slice(2).substring(0, 5).toUpperCase();
     c = code;
     const response = await Course.create({
       creator: req.user.username,
@@ -122,6 +123,7 @@ router.get("/assignments/:code", async (req, res) => {
     a: assignments,
     user: req.user,
     coursecode: req.params.code,
+    course: course
   });
 });
 
@@ -181,12 +183,15 @@ router.get("/view_submission/:code", async (req, res) => {
     return res.send("User Not Authorized");
   }
   const f = await FileData.find({ assigncode: req.params.code });
-  console.log(f);
+  //console.log(f);
   const assignment = await Assign.findOne({ assigncode: req.params.code });
+  const course = await Course.findOne({coursecode: assignment.coursecode})
+  //console.log(course)
   return res.render("instructor/view_submission", {
     user: req.user,
     files: f,
     assignment: assignment,
+    course: course,
   });
 });
 
