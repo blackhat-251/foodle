@@ -1,40 +1,53 @@
-#chat {
-    overflow: hidden;
-}
-
-.sent-msg {
-    border: 2px solid #dedede;
-    background-color: #f1f1f1;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 10px 0;
-    width: 50%;
-    float: right;
-}
-
-.sent-msg img {
-    float: right;
-    max-width: 60px;
-    width: 100%;
-    margin-right: 20px;
-    border-radius: 50%;
-}
-
-.received-msg {
-    border-color: #ccc;
-    border: 2px;
-    background-color: #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 10px 0;
-    width: 50%;
-    float: left;
-}
-
-.received-msg img {
-    float: left;
-    max-width: 60px;
-    width: 100%;
-    margin-right: 20px;
-    border-radius: 50%;
-}
+* {
+    font-family: 'Avenir';
+  }
+  #chat {
+      padding: 10px 10px;
+      display: flex;
+      justify-content: flex-end;
+      flex-direction: column;
+      align-self: flex-end;
+    color: #fff;
+  }
+  .received-msg {
+    display: inline-flex;
+  }
+  .sent-msg {
+    display: inline-flex;
+    flex-direction: row-reverse;
+  }
+  .inlineIcon {
+    width:20px;
+    object-fit: contain;
+  }
+  .ownBubble {
+      min-width: 60px;
+      max-width: 700px;
+      padding: 14px 18px;
+    margin: 6px 8px;
+      background-color: #5b5377;
+      border-radius: 16px 16px 0 16px;
+      border: 1px solid #443f56;
+   
+  }
+  .otherBubble {
+      min-width: 60px;
+      max-width: 700px;
+      padding: 14px 18px;
+    margin: 6px 8px;
+      background-color: #6C8EA4;
+      border-radius: 16px 16px 16px 0;
+      border: 1px solid #54788e;
+    
+  }
+  .own {
+      align-self: flex-end;
+  }
+  .other {
+      align-self: flex-start;
+  }
+  span.own,
+  span.other{
+    font-size: 14px;
+    color: grey;
+  }

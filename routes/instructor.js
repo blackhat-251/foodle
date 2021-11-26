@@ -22,7 +22,7 @@ router.get("/profile", async (req, res) => {
   const users = await User.find();
   var x = [];
   users.forEach((obj) => {
-    x.push({ name: obj.name });
+    x.push({ name: obj.name, username: obj.username });
   });
   //console.log(x);
   return res.render("instructor/profile", {
@@ -269,11 +269,13 @@ router.all("/assignta/:coursecode", async (req, res) => {
     const ta_user = users.filter((user) => {
       return ta_uname.includes(user.username)
     })
-    res.render('instructor/tas', 
-    { course: course, 
-      tas_name: ta_user, 
-      tas_priv: course.ta_username, 
-      user: req.user })
+    res.render('instructor/tas',
+      {
+        course: course,
+        tas_name: ta_user,
+        tas_priv: course.ta_username,
+        user: req.user
+      })
   }
   else {
     const username = req.body.username

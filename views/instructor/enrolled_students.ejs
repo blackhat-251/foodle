@@ -1,8 +1,8 @@
 
 <!DOCTYPE html>
-<%- include("./partials/head.ejs") %>
+<%- include("../partials/head.ejs") %>
 
-    <%- include("./partials/home.ejs") %>
+    <%- include("../partials/home.ejs") %>
 
         <body style="padding-top: 4em; background-color:white;">
             <h1>Course <%= course.name %>
@@ -31,6 +31,6 @@
                 </form>
                 <a href="/instructor/inviteall/<%= course.coursecode %>">Invite</a> all students
                 for the course through mail
-                <%- include("./partials/foot.ejs") %>
+                <%- include("../partials/foot.ejs") %>
 
         </body>

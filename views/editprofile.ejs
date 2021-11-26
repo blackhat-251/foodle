@@ -1,8 +1,8 @@
-<% if(user.role=="student" ) { %>
-    <%- include("./student/partials/head.ejs") %>
 
-        <%- include("./student/partials/home.ejs") %>
-            <% } %>
+    <%- include("./partials/head.ejs") %>
+
+        <%- include("./partials/home.ejs") %>
+            
 
                 <body style="padding-top: 4em; background-color:white;">
                     <h2>Edit profile</h2>
@@ -21,7 +21,7 @@
                                 <input type="text" name="email">
                                 <input type="submit" value="Submit">
                             </form>
-                            <% if(user.role=="student" ) { %>
-                                <%- include("./student/partials/foot.ejs") %>
-                                    <% } %>
+    
+                                <%- include("./partials/foot.ejs") %>
+                                  
                 </body>

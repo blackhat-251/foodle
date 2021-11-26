@@ -21,8 +21,8 @@ mongoose.connect(uri);
 /* GET home page. */
 router.get("/", function (req, res, next) {
   //console.log(req.user);
-  if ((req.user.role = "student")) res.redirect("/student/");
-  else if ((req.user.role = "instructor")) res.redirect("/instructor/");
+  if ((req.user.role == "student")) res.redirect("/student/");
+  else if ((req.user.role == "instructor")) res.redirect("/instructor/");
   else res.redirect("/login");
 });
 

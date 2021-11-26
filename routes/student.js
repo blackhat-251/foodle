@@ -18,9 +18,9 @@ router.get("/profile", async (req, res) => {
   const users = await User.find();
   var x = [];
   users.forEach((obj) => {
-    x.push({ name: obj.name });
+    x.push({ name: obj.name, username: obj.username });
   });
- // console.log(x);
+  // console.log(x);
 
   return res.render("student/profile", { user: req.user, users: x });
 });

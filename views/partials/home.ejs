@@ -13,7 +13,12 @@
       <div class="collapse navbar-collapse" id="basicExampleNav">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
+            <% if(user.role == 'student'){ %> 
             <a class="navbar-brand" href="/student/courses">
+              <% }else{ %>
+            <a class="navbar-brand" href="/instructor/courses">
+
+                <% } %>  
               <img src="/images/blackhat.png" alt="Logo" width="10%"> blackhat251 Foodle
             </a>
           </li>
@@ -21,6 +26,7 @@
 
         <!-- Right -->
         <ul class="navbar-nav ml-auto">
+          <% if(user.role=="student"){ %> 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle waves-effect" data-toggle="dropdown" aria-haspopup="true"
               aria-expanded="true">
@@ -35,11 +41,13 @@
               </a>
             </div>
           </li>
+          <% } %> 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle waves-effect" id="navbarDropdownMenuLink3" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="true">
               <%= user.name %>
             </a>
+            <% if (user.role == "student"){%> 
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
               <a class="dropdown-item" href="/student/courses">My Courses</a>
               <a class="dropdown-item" href="/student/todo">Pending Assignments</a>
@@ -49,6 +57,18 @@
               <a class="dropdown-item" href="/update_password">Update Password</a>
               <a class="dropdown-item" href="/student/profile">Your Profile</a>
             </div>
+            <% }else{ %>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="/instructor/courses">My Courses</a>
+                <a class="dropdown-item" href="/instuctor/todo">Pending Assignments</a>
+                <a class="dropdown-item" href="/instructor/create_course">Create New Course</a>
+                <a class="dropdown-item" href="#!">Grades</a>
+                <a class="dropdown-item" href="/editprofile">Edit Profile</a>
+                <a class="dropdown-item" href="/update_password">Update Password</a>
+                <a class="dropdown-item" href="/instructor/profile">Your Profile</a>
+            </div>
+              <% } %> 
+
           </li>
           <li class="nav-item pl-2 mb-2 mb-md-0">
             <a href="/logout" type="button"
