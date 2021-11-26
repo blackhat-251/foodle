@@ -1,0 +1,40 @@
+#chat {
+    overflow: hidden;
+}
+
+.sent-msg {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    width: 50%;
+    float: right;
+}
+
+.sent-msg img {
+    float: right;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+}
+
+.received-msg {
+    border-color: #ccc;
+    border: 2px;
+    background-color: #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    width: 50%;
+    float: left;
+}
+
+.received-msg img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+}

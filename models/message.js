@@ -6,7 +6,7 @@ const MessageSchema = new mongoose.Schema(
     isGroupMsg :{type: Boolean, required: true},
     sender: { type: String, required: true },
     receiver: { type: String, required: false },
-    time: { type: Date, default: Date.now },
+    time: { type: String, required: false},
   },
   { collection: "msg", timestamps: true }
 );

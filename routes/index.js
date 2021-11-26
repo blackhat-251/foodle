@@ -301,7 +301,8 @@ router.post("/chat/sendmsg/:username", async (req, res) => {
     content : req.body.content,
     isGroupMsg : false,
     sender : req.user.username,
-    receiver : chatWith.username
+    receiver : chatWith.username,
+    time : new Date().toLocaleString()
   });
 
   console.log("Message sent", response);
@@ -363,7 +364,8 @@ router.post("/forum/sendmsg/:coursecode", async (req, res)=>{
     content : req.body.content,
     isGroupMsg : true,
     sender : req.user.username,
-    receiver : course.coursecode
+    receiver : course.coursecode,
+    time : new Date().toLocaleString()
   });
 
   return res.send("OK")

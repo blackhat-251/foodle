@@ -1,5 +1,6 @@
+<link rel="stylesheet" href="/stylesheets/chat.css">
+
 <h1><%= course.name %> forum</h1>
-<hr>
 <div id = "chat">
 <% msgs.forEach(function(msg){ %>
     <% if(msg.sender != user.username){ %>
@@ -7,14 +8,18 @@
     <% } else { %>
         <div class="sent-msg">
     <% } %>
+            <img src="/images/blackhat.png">
             <% if(course.creator == msg.sender){ %>
-                <h3 style="color:Tomato;"><%= msg.sender %> (Course Instructor)</h3>
+                <b style="color:Tomato;"><%= msg.sender %> (Course Instructor)</b>
             <% } else { %>
-                <h3><%= msg.sender %></h3>
+                <b><%= msg.sender %></b>
             <% } %>
-            <h4><%= msg.content %></h4>
+            </br></br>
+            <%= msg.content %>
+            </br>
+            <span style="float: right;"><%= msg.time %></span>
+
         </div>
-    <hr>
 <% }) %>
 </div>
 
@@ -55,9 +60,9 @@
         document.getElementById("chat").append(divtag)
         
         if(sender == "<%= course.creator %>"){
-            divtag.innerHTML = `<h3 style="color:Tomato;">${sender} (Course Instructor)</h3><h4>${content}</h4><hr>`;
+            divtag.innerHTML = `<img src="/images/blackhat.png"><b style="color:Tomato;">${sender} (Course Instructor)</b></br></br>${content}</br><span style="float: right;">${new Date().toLocaleString()}</span>`;
         }else{
-            divtag.innerHTML = `<h3>${sender}</h3><h4>${content}</h4><hr>`;
+            divtag.innerHTML = `<img src="/images/blackhat.png"><b>${sender}</b></br></br>${content}</br><span style="float: right;">${new Date().toLocaleString()}</span>`;
         } 
     }
 
