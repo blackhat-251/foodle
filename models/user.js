@@ -10,6 +10,7 @@ const UserSchema = new mongoose.Schema(
     assignments: [{ type: String }],
     courses: [{ type: String }],
     ta_courses: [{ type: String }], //Course codes for which the student is a TA
+    pwdChangeToken : [{type: String}]
   },
   { collection: "users" }
 );
