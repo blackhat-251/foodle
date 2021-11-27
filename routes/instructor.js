@@ -282,9 +282,15 @@ router.all("/assignta/:coursecode", async (req, res) => {
     const announcement = req.body.announcement ? true : false
     const grading = req.body.grading ? true : false
     const assignment = req.body.assignment ? true : false
-    // console.log(assignment)
-    // console.log(grading)
-    // console.log(announcement)
+    
+    // make sure the username is valid
+    if(!(await User.findOne({'username':username}))){
+      return res.send("Invalid username")
+    }
+
+    // remove the old ta permissions to avoid duplication
+    course.ta_username = course.ta_username.filter((ta)=>{return ta.username != username});
+  
     course.ta_username.push({
       username: username,
       announcement: announcement,
