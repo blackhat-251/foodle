@@ -203,6 +203,34 @@ router.get("/view_submission/:code", async (req, res) => {
   });
 });
 
+router.get("/view_grades/:coursecode", async (req, res) => {
+  if (!req.user.courses.includes(req.params.coursecode)) {
+    return res.send("User Not Authorized");
+  }
+  const assignments= await Assign.find({coursecode: req.params.coursecode})
+  var marks=[];
+  for(var i=0;i<assignments.length;i++){
+    const f = await FileData.find({ assigncode: assignments[i].assigncode });
+    var num=0;
+    var sum=0;
+    f.forEach((file)=>{
+      if(file.grade){
+        sum+=file.grade;
+        num+=1;
+      }
+    });
+    marks.push(sum/num);
+  }
+  console.log(marks);
+  const course = await Course.findOne({coursecode: req.params.coursecode})
+  return res.render("instructor/view_grades", {
+    user: req.user,
+    course: course,
+    marks: marks,
+    assignments: assignments
+  });
+});
+
 router.post("/feedback/:id", async (req, res) => {
   const id = req.params.id;
   const feedback = req.body.feedback;

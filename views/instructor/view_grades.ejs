@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<head>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
+    <script src="http://d3js.org/d3.v6.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.6.3.min.js"></script>
+</head>
+<%- include("../partials/head.ejs") %>
+
+    <%- include("../partials/home.ejs") %>
+
+        <body style="padding-top: 4em; background-color:white;">
+
+            <h2>
+                Course : <%= course.name %>
+            </h2>
+            <p id="mean">Mean</p>
+            <p id="var">Variance</p>
+            <% num=0 %>
+            <% titles=[] %>
+
+                <h2>Submissions </h2>
+                <% if(assignments) { %>
+                    <ol>
+                        <% assignments.forEach(function(assign) {%>
+                            <li>
+                                </br>
+                                Assignment: <%= assign.title %>
+                                </br>
+                                Class Mean: <%= marks[num]%>
+                              </br>
+                               
+                                <%num=num+1 %>
+                                <%titles.push(assign.title)%>
+
+                            </li>
+                            <% }) %>
+                    </ol>
+                    <% } else { %>
+                        <p>No assignments to show</p>
+                        <% } %>
+                    <p><% marks %></p>
+                    <div style="width: 50%;" id="test"></div>
+        </body>
+        <%
+        function dev(arr){
+            let mean = arr.reduce((acc, curr)=>{
+              return acc + curr
+            }, 0) / arr.length;
+            arr = arr.map((k)=>{
+              return (k - mean) ** 2
+            })
+             
+           let sum = arr.reduce((acc, curr)=> acc + curr, 0);
+           let variance = sum / arr.length
+           return [mean,variance]
+          }
+        %>
+
+        <script> 
+document.getElementById("mean").innerHTML = `Mean of class averages: ${<%= dev(marks)[0] %>} `;
+document.getElementById("var").innerHTML = `Variance of class averages: ${<%= dev(marks)[1] %>} `;
+
+
+const plot=document.getElementById('test');
+ 
+mark= <%- JSON.stringify(marks) %>
+y=[0,0,0,0,0]
+for(const m of mark){
+    if(m<20){
+        y[0]+=1;
+    }
+    else if(m<40){
+        y[1]+=1;
+    }
+    else if(m<60){
+        y[2]+=1;
+    }
+    else if(m<80){
+        y[3]+=1;
+    }
+    else if(m<=100){
+        y[4]+=1;
+    }
+}
+
+var data = [
+  {
+    x: <%- JSON.stringify(titles) %>,
+    y: <%- JSON.stringify(marks) %>,
+    type: 'bar',
+    name: 'No of assignments'
+  }
+];
+var layout = {
+  title: {
+    text:'',
+    font: {
+      family: 'Courier New, monospace',
+      size: 24
+    },
+    xref: 'paper',
+    x: 0.05,
+  },
+  xaxis: {
+    title: {
+      text: 'Class Averages',
+      font: {
+        family: 'Courier New, monospace',
+        size: 18,
+        color: '#7f7f7f'
+      }
+    },
+  },
+  yaxis: {
+    title: {
+      text: 'No of Assignments',
+      font: {
+        family: 'Courier New, monospace',
+        size: 18,
+        color: '#7f7f7f'
+      }
+    }
+  }
+};
+Plotly.newPlot(plot, data, layout);
+        </script>
+        <%- include("../partials/foot.ejs") %>
