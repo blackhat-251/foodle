@@ -188,11 +188,18 @@ router.get("/view_submission/:code", async (req, res) => {
   const assignment = await Assign.findOne({ assigncode: req.params.code });
   const course = await Course.findOne({ coursecode: assignment.coursecode })
   //console.log(course)
+  var marks=[];
+  f.forEach((file)=>{
+    if(file.grade){
+      marks.push(file.grade);
+    }
+  });
   return res.render("instructor/view_submission", {
     user: req.user,
     files: f,
     assignment: assignment,
     course: course,
+    marks: marks,
   });
 });
 
@@ -327,5 +334,6 @@ router.get("/todo", async (req, res) => {
     'pending': pending,
   });
 });
+
 
 module.exports = router;

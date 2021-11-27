@@ -50,9 +50,14 @@
                     </h2>
                     <p id="ass_count">Number of assignments: </p>
                     <p id="sub_count">Submitted: </p>
+                    <p id="course_total">Total Marks: </p>
+                    <p id="stud_total">Your Marks: </p>
+                    <p id="percent">Percentage: </p>
                     <p id="completion"></p>
 
                     <% var sub=0 %>
+                    <% var stud_total=0 %>
+                    <% var course_total=0 %>
                         <% assignments.forEach(function(assignment) { %>
                             <div class="card mb-3 mx-2">
                                 <div class="card-header">
@@ -68,6 +73,7 @@
                                                         Due Deadline: <%= assignment.deadline%>
                                                             </br>
                                                             Weightage(in %) = <%= assignment.weightage %>
+                                                            <% course_total=course_total+assignment.weightage %>
                                                                 <form action="/upload/<%= assignment.assigncode %>"
                                                                     method="post" enctype="multipart/form-data">
                                                                     <div class="custom-file mb-3">
@@ -100,6 +106,7 @@
                                                                                         grade:
                                                                                         <% if(file.grade) { %>
                                                                                             <%= file.grade %>
+                                                                                            <% stud_total= stud_total + file.grade*assignment.weightage/100 %>
 
                                                                                                 <% } else { %>
                                                                                                     No Grade recieved
@@ -129,6 +136,9 @@
                                     document.getElementById("ass_count").innerHTML = `Number of Assignments: ${<%= assignments.length %>}`;
         document.getElementById("sub_count").innerHTML = `Submitted Count: ${<%= sub %>} `;
         document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub / assignments.length) * 100 %>}%`;
+        document.getElementById("course_total").innerHTML = `Total Marks: ${<%= course_total %>} `;
+        document.getElementById("stud_total").innerHTML = `Your Marks: ${<%= stud_total %>} `;
+        document.getElementById("percent").innerHTML = `Percentage: ${<%= stud_total*100/course_total %>}% `;
                                 </script>
                                 <%- include("../partials/foot.ejs") %>
                 </body>

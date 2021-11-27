@@ -1,4 +1,9 @@
 <!DOCTYPE html>
+<head>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js'></script>
+    <script src="http://d3js.org/d3.v6.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.6.3.min.js"></script>
+</head>
 <%- include("../partials/head.ejs") %>
 
     <%- include("../partials/home.ejs") %>
@@ -8,6 +13,10 @@
             <h2>
                 <%= assignment.title %> for course : <%= course.name %>
             </h2>
+            <p id="mean">Mean</p>
+            <p id="var">Variance </p>
+            <div id="test"></div>
+            <% arr=[] %>
 
             <% function get_time(date1, date2) { var diff=(date1 - date2) / (1000 * 60 * 60 * 24); //In days var time;
                 if (Math.abs(diff)> 1) {
@@ -66,6 +75,7 @@
                                         </br>
                                         Last given feedback: <%= file.feedback %></br>
                                             Last given grade: <%= file.grade %> </br>at time <%= file.updatedAt %>
+                                            <% arr.push(file.grade) %>
                                                     </br>
                                                     The assignment was submitted: <%=
                                                         get_time(assignment.deadline,file.updatedAt) %>
@@ -84,5 +94,56 @@
                     <% } else { %>
                         <p>No files to show</p>
                         <% } %>
+                    <p><% marks %></p>
         </body>
+        <%
+        function dev(arr){
+            let mean = arr.reduce((acc, curr)=>{
+              return acc + curr
+            }, 0) / arr.length;
+            arr = arr.map((k)=>{
+              return (k - mean) ** 2
+            })
+             
+           let sum = arr.reduce((acc, curr)=> acc + curr, 0);
+           let variance = sum / arr.length
+           return [mean,variance]
+          }
+        %>
+        <%
+        function dev(arr){
+            let mean = arr.reduce((acc, curr)=>{
+              return acc + curr
+            }, 0) / arr.length;
+            arr = arr.map((k)=>{
+              return (k - mean) ** 2
+            })
+             
+           let sum = arr.reduce((acc, curr)=> acc + curr, 0);
+           let variance = sum / arr.length
+           return [mean,variance]
+          }
+        %>
+
+        <script> 
+document.getElementById("mean").innerHTML = `Mean: ${<%= dev(marks)[0] %>} `;
+document.getElementById("var").innerHTML = `Variance: ${<%= dev(marks)[1] %>} `;
+
+
+const plot=document.getElementById('test');
+
+
+ var trace = {
+   x: <%- JSON.stringify(marks) %>,
+   type: 'histogram',
+   autobinx: false,
+   xbins: {
+   end: 100, 
+   size: 20, 
+   start: 0
+   }
+};
+var data = [trace];
+Plotly.newPlot(plot, data);
+        </script>
         <%- include("../partials/foot.ejs") %>
