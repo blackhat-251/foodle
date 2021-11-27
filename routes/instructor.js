@@ -289,9 +289,15 @@ router.all("/assignta/:coursecode", async (req, res) => {
     const announcement = req.body.announcement ? true : false
     const grading = req.body.grading ? true : false
     const assignment = req.body.assignment ? true : false
-    // console.log(assignment)
-    // console.log(grading)
-    // console.log(announcement)
+    
+    // make sure the username is valid
+    if(!(await User.findOne({'username':username}))){
+      return res.send("Invalid username")
+    }
+
+    // remove the old ta permissions to avoid duplication
+    course.ta_username = course.ta_username.filter((ta)=>{return ta.username != username});
+  
     course.ta_username.push({
       username: username,
       announcement: announcement,
@@ -302,6 +308,27 @@ router.all("/assignta/:coursecode", async (req, res) => {
     console.log(course)
     return res.redirect('back')
   }
+})
+
+router.post("/toggle-forum/:coursecode", async (req,res) =>{
+  const course = await Course.findOne({ coursecode: req.params.coursecode });
+  
+  if(course.creator != req.user.username){
+    return "You are not an instructor of this course";
+  }
+
+  let response;
+  if(req.body.action == "Enable-forum"){
+    course.forumDisabled = false;
+    response = "Forum enabled";
+  }else{
+    course.forumDisabled = true;
+    response = "Forum disabled";
+  }
+
+  await course.save();
+
+  return res.send(response);
 })
 
 router.get("/todo", async (req, res) => {

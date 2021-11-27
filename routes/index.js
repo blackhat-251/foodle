@@ -14,7 +14,8 @@ const FileData = require("../models/file_data");
 const Assign = require("../models/assignment");
 const Message = require("../models/message");
 const Course = require("../models/course");
-const { trueDependencies } = require("mathjs");
+const sendmail = require("../services/mailer");
+const math = require("mathjs");
 
 mongoose.connect(uri);
 
@@ -113,6 +114,7 @@ router.all("/register", async (req, res) => {
   }
 });
 
+/*
 router.post("/update_password", async (req, res) => {
   if (!(await bcrypt.compare(req.body.old_pwd, req.user.password))) {
     return res.render("/update_password", {
@@ -133,9 +135,41 @@ router.post("/update_password", async (req, res) => {
     message: { success: "Password changed successfully" },
   });
 });
+*/
 
-router.get("/update_password", (req, res) => {
-  return res.render("update_password");
+router.all("/update_password/:pwdChangeToken", async (req,res)=>{
+  if(req.params.pwdChangeToken != req.user.pwdChangeToken){
+    return res.send("Invalid link to change password");
+  }
+
+  if(req.method == "GET"){
+    return res.render("update_password",{'pwdChangeToken':req.params.pwdChangeToken});
+  }else{
+    const password = await bcrypt.hash(req.body.new_pwd, 10);
+    req.user.password = password;
+    req.user.pwdChangeToken = "";
+
+    await req.user.save();
+    return res.render("login",{'message':{'error':'','success':'Password changed successfully, please login again'}});
+  }
+  
+})
+
+router.get("/update_password", async (req, res) => {
+  const pwdChangeToken = math.randomInt(1e20).toString(36);
+  
+  req.user.pwdChangeToken = pwdChangeToken;
+  await req.user.save();
+
+  let maildetails = {
+    from: process.env.email,
+    to: req.user.email,
+    subject: `Password update link`,
+    text: `Hi ${req.user.name}! \nClick http://localhost:3000/update_password/${pwdChangeToken} to change your password`,
+  };
+
+  await sendmail(maildetails);
+  return res.send("Sent a password update link on your email address");
 });
 
 router.get("/logout", (req, res) => {
@@ -197,8 +231,9 @@ router.post("/editprofile", async (req, res) => {
   req.user.name = newname;
   req.user.email = newmail;
   await req.user.save();
-  return res.render("/editprofile", {
+  return res.render("editprofile", {
     message: { success: "Profile edited successfully" },
+    user: req.user
   });
 });
 
@@ -342,6 +377,10 @@ router.get("/forum/:coursecode", async (req,res) =>{
     return res.send("Course doesn't exist");
   }
 
+  if(course.forumDisabled && req.user.username != course.creator){
+    return res.send("The forum is currently disabled");
+  }
+
   const messages = await Message.find({$and:[
     {'isGroupMsg':true},{'receiver':course.coursecode}
   ]})
@@ -358,6 +397,10 @@ router.post("/forum/sendmsg/:coursecode", async (req, res)=>{
 
   if(!course){
     return res.send("Course doesn't exist");
+  }
+
+  if(course.forumDisabled && req.user.username != course.creator){
+    return res.send("The forum is currently disabled");
   }
 
   const response = await Message.create({

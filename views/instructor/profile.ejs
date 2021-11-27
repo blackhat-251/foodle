@@ -37,7 +37,7 @@
                     <div class="col">
                         <ul>
                             <% for(var i=0; i < users.length; i++) { %>
-                                <% if(users[i].name !=user.name) {%>
+                                <% if(users[i].username !=user.username) {%>
                                     <li>
                                         <a href="/chat/<%= users[i].username %>"><%= users[i].name %></a>
                                     </li>
