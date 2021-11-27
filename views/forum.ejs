@@ -43,6 +43,15 @@
                     </div>
 
                     <input id="msgContent"> <button onclick="sendForumMsg()">Send</button>
+                    <% if(course.creator == user.username) {%>
+                        <button id="toggle" onclick="toggleForum()">
+                            <% if(course.forumDisabled){ %>
+                                Enable-forum
+                            <% } else { %>
+                                Disable-forum
+                            <% } %>
+                        </button>
+                    <% } %>
                     <%- include("./partials/foot.ejs") %>
 
                         <script>
@@ -80,9 +89,9 @@
                                 document.getElementById("chat").append(divtag)
 
                                 if (sender == "<%= course.creator %>") {
-                                    divtag.innerHTML += `<img src="/images/blackhat.png" class="inlineIcon"><div class="otherBubble other"><b style="color:Tomato;">${sender} (Course Instructor)</b></br>${content}</br></div><span style="float: right;">${new Date().toLocaleString()}</span>`;
+                                    divtag.innerHTML += `<img src="/images/blackhat.png" class="inlineIcon"><div class="otherBubble other"><b style="color:Tomato;">${sender} (Course Instructor)</b></br>${content}</br></div><span class="other">${new Date().toLocaleString()}</span>`;
                                 } else {
-                                    divtag.innerHTML += `<img src="/images/blackhat.png" class="inlineIcon"><div class="otherBubble other"><b>${sender}</b></br>${content}</br></div><span style="float: right;">${new Date().toLocaleString()}</span>`;
+                                    divtag.innerHTML += `<img src="/images/blackhat.png" class="inlineIcon"><div class="otherBubble other"><b>${sender}</b></br>${content}</br></div><span class="other">${new Date().toLocaleString()}</span>`;
                                 }
                             }
 
@@ -119,5 +128,31 @@
                                 })
                             }
 
+                            <% if(course.creator = user.username) {%>
+                                async function toggleForum(){
+                                    let button = document.getElementById("toggle");
+                                    let action = button.innerText;
+
+                                    await fetch("/instructor/toggle-forum/<%= course.coursecode %>", {
+                                        method: "post",
+                                        headers: {
+                                            'Accept': 'application/json',
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ "action":action })
+                                        }).then((resp) => {
+                                            resp.text().then((text) => {
+                                                alert(text);
+                                            })
+                                        })
+                                
+                                    if(action == "Enable-forum"){
+                                        button.innerText = "Disable-forum";
+                                    }else{
+                                        button.innerText = "Enable-forum";
+                                    }
+                                }
+                            <% } %>
                             setInterval(checkNewForumMsgs, 2000);
+                            
                         </script>

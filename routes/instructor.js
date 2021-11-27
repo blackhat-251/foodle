@@ -297,6 +297,27 @@ router.all("/assignta/:coursecode", async (req, res) => {
   }
 })
 
+router.post("/toggle-forum/:coursecode", async (req,res) =>{
+  const course = await Course.findOne({ coursecode: req.params.coursecode });
+  
+  if(course.creator != req.user.username){
+    return "You are not an instructor of this course";
+  }
+
+  let response;
+  if(req.body.action == "Enable-forum"){
+    course.forumDisabled = false;
+    response = "Forum enabled";
+  }else{
+    course.forumDisabled = true;
+    response = "Forum disabled";
+  }
+
+  await course.save();
+
+  return res.send(response);
+})
+
 router.get("/todo", async (req, res) => {
   courses = await Course.find({'creator':req.user.username});
 

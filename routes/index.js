@@ -342,6 +342,10 @@ router.get("/forum/:coursecode", async (req,res) =>{
     return res.send("Course doesn't exist");
   }
 
+  if(course.forumDisabled && req.user.username != course.creator){
+    return res.send("The forum is currently disabled");
+  }
+
   const messages = await Message.find({$and:[
     {'isGroupMsg':true},{'receiver':course.coursecode}
   ]})
@@ -358,6 +362,10 @@ router.post("/forum/sendmsg/:coursecode", async (req, res)=>{
 
   if(!course){
     return res.send("Course doesn't exist");
+  }
+
+  if(course.forumDisabled && req.user.username != course.creator){
+    return res.send("The forum is currently disabled");
   }
 
   const response = await Message.create({

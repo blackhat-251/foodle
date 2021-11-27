@@ -10,6 +10,7 @@ const CourseSchema = new mongoose.Schema(
     enrolled_students: [{ type: String }],
     ta_username: [{ type: Object }], // list of JSON {username:'str', announcement: 'bool', grading: 'bool', assignment: 'bool'}
     announcements: [{ type: Map, of: String }],
+    forumDisabled: {type: Boolean}
   },
   { collection: "courses", timestamps: true }
 );
