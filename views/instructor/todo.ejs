@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<%- include("../partials/head.ejs") %>
+
+    <%- include("../partials/home.ejs") %>
+
+        <body style="padding-top: 4em; background-color:white;">
+            <% if(pending.length > 0) { %>
+                <h2>Submissions yet to be graded</h2>
+                <ol>
+                    <% pending.forEach(function(curr_pending) {%>
+                        <li><h5><a href="/instructor/view_submission/<%= curr_pending[1] %>"><%= curr_pending[0] %></a></h5></li>
+                    <ul>
+                        <% curr_pending[2].forEach(function(file) {%>
+                            <li>
+                                Filename: <%= file.filename %>
+                                    </br>
+                                    Submitted by: <%= file.username %>
+                                        </br> download link:
+                                        <a href="/download/<%= file._id %>" download>
+                                            <%= file.filename %>
+                                        </a>
+                                        </br>
+                                                        <form action="/instructor/feedback/<%= file._id %>"
+                                                            method="post">
+                                                            <label for="title">Feedback</label>
+                                                            <input type="text" name="feedback">
+                                                            <label for="title">Grade</label>
+                                                            <input type="number" name="grade" min="0" max="100"
+                                                                default="0">
+                                                            <input type="submit" value="Submit">
+                                                        </form>
+                            </li>
+                            <% }) %>
+                    </ul>
+                    <% }) %>
+                </ol>
+                <% } else { %>
+                    <h2>No submissions left for grading</h2>
+                    <% } %>
+                    <%- include("../partials/foot.ejs") %>
+        </body>

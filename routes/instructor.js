@@ -297,4 +297,35 @@ router.all("/assignta/:coursecode", async (req, res) => {
   }
 })
 
+router.get("/todo", async (req, res) => {
+  courses = await Course.find({'creator':req.user.username});
+
+  var assigncodes = [];
+  courses.forEach((course)=>{
+    course.assignments.forEach((assignment)=>{
+      assigncodes.push(assignment);
+    })
+  })
+
+  const f = await FileData.find({$and:[{'assigncode':{$in : assigncodes}},{'grade':{$exists : false}}]});
+  const assignments = await Assign.find({'assigncode':{$in : assigncodes}});
+
+  const pending = []
+  
+  assignments.forEach((assignment)=>{
+    let pending_submissions = f.filter((file)=>{
+                                return file.assigncode == assignment.assigncode;
+                              })
+    if(pending_submissions.length > 0){
+      let curr_pending = [assignment.title, assignment.assigncode, pending_submissions];
+      pending.push(curr_pending);
+    }
+
+  })
+  return res.render("instructor/todo", {
+    'user': req.user,
+    'pending': pending,
+  });
+});
+
 module.exports = router;
