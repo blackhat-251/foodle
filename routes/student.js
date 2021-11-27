@@ -127,6 +127,32 @@ router.get("/enroll/:coursecode", async (req, res) => {
   return res.redirect("/student/courses");
 });
 
+router.get("/grade/:coursecode", async(req, res) => {
+  const course = await Course.findOne({ coursecode: req.params.coursecode });
+  const assignments= await Assign.find({coursecode: req.params.coursecode})
+  const f = await FileData.find({ username: req.user.username });
+  var class_avg = 0
+  for(var i=0;i<assignments.length;i++){
+    const f = await FileData.find({ assigncode: assignments[i].assigncode });
+    var num=0;
+    var sum=0;
+    f.forEach((file)=>{
+      if(file.grade){
+        sum+=file.grade;
+        num+=1;
+      }
+    });
+    class_avg += (sum/num)*assignments[i].weightage/100
+  }
+  // class_avg /= assignments.length
+  res.render("student/grade", {
+    user: req.user,
+    ass: assignments,
+    files: f,
+    course: course,
+    class_avg: class_avg,
+  });
+})
 router.get("/assignments/:coursecode", async (req, res) => {
   const course = await Course.findOne({ coursecode: req.params.coursecode });
   const assignment = await Assign.find();

@@ -8,8 +8,7 @@
 
     <%- include("../partials/home.ejs") %>
 
-        <body style="padding-top: 4em; background-color:white;">
-
+        <body style="padding-top: 4em; background-color:white;" class="ml-4">
             <h2>
                 Course : <%= course.name %>
             </h2>
@@ -18,12 +17,12 @@
             <% num=0 %>
             <% titles=[] %>
 
-                <h2>Submissions </h2>
+                <h2>Assignments </h2>
                 <% if(assignments) { %>
                     <ol>
                         <% assignments.forEach(function(assign) {%>
                             <li>
-                                </br>
+                      
                                 Assignment: <%= assign.title %>
                                 </br>
                                 Class Mean: <%= marks[num]%>

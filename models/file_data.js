@@ -7,7 +7,6 @@ const FileDataSchema = new mongoose.Schema(
     feedback: { type: String, required: false },
     grade: { type: Number },
     assigncode: { type: String, required: true },
-    dueTime: { type: String },
   },
   { collection: "filesData", timestamps: true }
 );

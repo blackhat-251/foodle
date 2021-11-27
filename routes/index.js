@@ -193,7 +193,7 @@ router.get("/download_all/:code", async (req, res) => {
     return res.send("unauthorised access");
   }
   const files_data = await FileData.find({ assigncode: req.params.code });
-
+  const assign = await Assign.findOne({ assigncode: req.params.code })
   cb = function () {};
   res.header("Content-Type", "application/zip");
   res.header(
@@ -203,7 +203,7 @@ router.get("/download_all/:code", async (req, res) => {
   var zip = zipstream({ level: 1 });
   zip.pipe(res); // res is a writable stream
 
-  csv_data = csv_creator(files_data);
+  csv_data = csv_creator(files_data, assign.deadline);
   console.log(csv_data);
   var addFile = function (file, cb) {
     zip.entry(file.content, { name: file.name }, cb);
@@ -429,7 +429,6 @@ router.get("/forum/noofmsgs/:coursecode", async (req,res)=>{
   if(!req.user.courses.includes(req.params.coursecode)){
     return res.send("You are not part of that course");
   }
-
   // sends the number of messages sent by the sender
   const number = await Message.countDocuments({$and:[{'isGroupMsg':true},{'receiver':req.params.coursecode},{'sender':{$ne:req.user.username}}]});
   return res.send(`${number}`);

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<%- include("../partials/head.ejs") %>
+
+    <%- include("../partials/home.ejs") %>
+
+        <body style="padding-top: 4em; background-color:white;">
+        </br>
+    <!-- </br>
+</br>
+</br> -->
+<h1>
+            <!-- <%= ass %></br>
+            <%= files %> -->
+</h1>
+<table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Assignment Name</th>
+        <th scope="col">Weightage</th>
+        <th scope="col">Obtained marks(out of 100)</th>
+        <th scope="col">feedback</th>
+      </tr>
+    </thead>
+        <% var sub=0 %>
+        <% var stud_total=0 %>
+        <% var course_total=0 %>
+    <tbody>
+        <% ass.forEach(function(assignment) { %>
+      <tr>
+        <td><%=assignment.title%></td>
+        <td><%=assignment.weightage%></td>
+        <% course_total += assignment.weightage %> 
+        <% files.forEach(function(file) {%>
+            <% if (file.assigncode==assignment.assigncode){ %>
+                <% if(file.grade){ %> 
+                <td><%= file.grade %> </td>
+                <% stud_total += file.grade/100*assignment.weightage %>
+                <% } %> 
+                <td><%= file.feedback %> </td>
+                <% }}) %>
+        
+      </tr>
+      <% }) %>
+      <tr>
+          <td></td>
+        <td>Course Total: <%= course_total %></td>
+          <td>Student Total: <%= stud_total %> </br>Class Average: <%= class_avg %>  </td>
+          <td>Percentage: <%= stud_total*100/course_total %></td>
+
+      </tr> 
+      
+      <!-- <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+      </tr>
+      <tr>
+        <th scope="row">3</th>
+        <td colspan="2">Larry the Bird</td>
+        <td>@twitter</td>
+      </tr> -->
+    </tbody>
+  </table>
+  <strong>
+  <% if(stud_total > class_avg ) {%>
+    Congrats! You're above class average
+    <% }else{ %> 
+        You're below class average :(
+    <% } %> 
+</strong>
+
+            <%- include("../partials/foot.ejs") %>
+        </body>
