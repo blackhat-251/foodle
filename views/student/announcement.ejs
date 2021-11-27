@@ -26,5 +26,8 @@
                         <% } else { %>
                             <p>No announcemmnet to show</p>
                             <% } %>
-                                <%- include("../partials/foot.ejs") %>
+                            <% if(ta_perms && ta_perms.announcement){ %>
+                                <a href="/instructor/create_announcement/<%= course.coursecode %>">Create Announcement</a>
+                            <% } %>    
+                            <%- include("../partials/foot.ejs") %>
         </body>

@@ -95,11 +95,9 @@ async function get_completion(courses, req) {
 }
 
 router.get("/courses", async (req, res) => {
-  courses = await Course.find();
-  const filtered_courses = await courses.filter((ass) => {
-    return req.user.courses.includes(ass.coursecode);
-  });
-  var completed_courses = await get_completion(filtered_courses, req);
+  let courses = await Course.find({$or:[{'coursecode':{$in:req.user.courses}},{'coursecode':{$in:req.user.ta_courses}}]});
+
+  var completed_courses = await get_completion(courses, req);
   console.log(completed_courses);
   return res.render("student/dashboard", {
     user: req.user,
@@ -129,16 +127,20 @@ router.get("/enroll/:coursecode", async (req, res) => {
 
 router.get("/assignments/:coursecode", async (req, res) => {
   const course = await Course.findOne({ coursecode: req.params.coursecode });
-  const assignment = await Assign.find();
-  const filtered_ass = await assignment.filter((ass) => {
-    return course.assignments.includes(ass.assigncode);
-  });
+  const assignments = await Assign.find({'assigncode':{$in : course.assignments}});
   const f = await FileData.find({ username: req.user.username });
+
+  var ta_perms;
+  if(req.user.ta_courses.includes(course.coursecode)){
+    ta_perms = course.ta_username.filter((ta)=>{return ta.username == req.user.username})[0];
+  }
+  
   res.render("student/assignment", {
     user: req.user,
-    assignments: filtered_ass,
+    assignments: assignments,
     files: f,
     course: course,
+    ta_perms: ta_perms
   });
 });
 
@@ -196,12 +198,16 @@ router.post("/assignments", async (req, res) => {
 router.get("/announcements/:code", async (req, res) => {
   var course = await Course.findOne({ coursecode: req.params.code });
 
-  var anncodes = course.announcements;
+  var ta_perms;
+  if(req.user.ta_courses.includes(course.coursecode)){
+    ta_perms = course.ta_username.filter((ta)=>{return ta.username == req.user.username})[0];
+  }
 
   return res.render("student/announcement", {
-    a: anncodes,
+    a: course.announcements,
     user: req.user,
     course: course,
+    ta_perms: ta_perms
   });
 });
 

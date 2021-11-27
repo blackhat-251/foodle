@@ -46,14 +46,16 @@
                 %>
 
                 <body style="padding-top: 4em; background-color:white;">
-                    <h2>Enrolled Assignments : Course <%= course.name %>
+                    <h2><% if(!ta_perms){ %>Enrolled <%}%>Assignments  : Course <%= course.name %>
                     </h2>
+                    <% if(user.courses.includes(course.coursecode)){ %>
                     <p id="ass_count">Number of assignments: </p>
                     <p id="sub_count">Submitted: </p>
                     <p id="course_total">Total Marks: </p>
                     <p id="stud_total">Your Marks: </p>
                     <p id="percent">Percentage: </p>
                     <p id="completion"></p>
+                    <% } %>
 
                     <% var sub=0 %>
                     <% var stud_total=0 %>
@@ -62,28 +64,55 @@
                             <div class="card mb-3 mx-2">
                                 <div class="card-header">
                                     <div class="card-title">
-                                        title: <%= assignment.title%>
+                                        Title: <%= assignment.title%>
                                             </br>
-                                            description: <%= assignment.description%>
+                                            Description: <%= assignment.description%>
                                                 </br>
-                                                instructor: <%= assignment.author%>
+                                                Instructor: <%= assignment.author%>
                                                     </br>
                                                     Assignment CreatedAt: <%= assignment.createdAt%>
                                                         </br>
                                                         Due Deadline: <%= assignment.deadline%>
                                                             </br>
                                                             Weightage(in %) = <%= assignment.weightage %>
-                                                            <% course_total=course_total+assignment.weightage %>
-                                                                <form action="/upload/<%= assignment.assigncode %>"
-                                                                    method="post" enctype="multipart/form-data">
+
+                                                            <% if(ta_perms && ta_perms.grading){ %>
+                                                                </br>
+                                                                <a href="/instructor/view_submission/<%= assignment.assigncode %>">View
+                                                                    submissions</a>
+                                                                </br>
+                                                                <a href="/download_all/<%= assignment.assigncode %>">Download
+                                                                    all submissions</a>
+                                                            
+                                                                </br>
+                                                                </br>
+                                                                Upload graded CSV downloaded from above link</br>
+                                                                <form action="/uploadcsv/<%= assignment.assigncode %>" method="post"
+                                                                    enctype="multipart/form-data">
                                                                     <div class="custom-file mb-3">
                                                                         <input type="file" name="file" id="file1">
-                                                                        <label for="file1" id="file-label"><small>Choose
-                                                                                file</small></label>
+                                                                        <label for="file1" id="file-label">Choose file</label>
                                                                     </div>
-                                                                    <input type="submit" id="submit-button"
-                                                                        value="Submit">
+                                                                    <input type="submit" id="submit-button" value="Submit">
                                                                 </form>
+                                                            <% } %>
+
+
+                                                            <% course_total=course_total+assignment.weightage %>
+                                                                
+                                                                <% if(user.courses.includes(course.coursecode)){ %>
+                                                                    <form action="/upload/<%= assignment.assigncode %>"
+                                                                        method="post" enctype="multipart/form-data">
+                                                                        <div class="custom-file mb-3">
+                                                                            <input type="file" name="file" id="file1">
+                                                                            <label for="file1" id="file-label"><small>Choose
+                                                                                    file</small></label>
+                                                                        </div>
+                                                                        <input type="submit" id="submit-button"
+                                                                            value="Submit">
+                                                                    </form>
+                                                                <% } %>
+
                                                                 <% if(files) { %>
                                                                     <ul>
                                                                         <% files.forEach(function(file) {%>
@@ -132,13 +161,19 @@
                             </div>
                             <% }) %>
 
+                            <% if(user.courses.includes(course.coursecode)){ %>
                                 <script>
                                     document.getElementById("ass_count").innerHTML = `Number of Assignments: ${<%= assignments.length %>}`;
-        document.getElementById("sub_count").innerHTML = `Submitted Count: ${<%= sub %>} `;
-        document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub / assignments.length) * 100 %>}%`;
-        document.getElementById("course_total").innerHTML = `Total Marks: ${<%= course_total %>} `;
-        document.getElementById("stud_total").innerHTML = `Your Marks: ${<%= stud_total %>} `;
-        document.getElementById("percent").innerHTML = `Percentage: ${<%= stud_total*100/course_total %>}% `;
+                                    document.getElementById("sub_count").innerHTML = `Submitted Count: ${<%= sub %>} `;
+                                    document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub / assignments.length) * 100 %>}%`;
+                                    document.getElementById("course_total").innerHTML = `Total Marks: ${<%= course_total %>} `;
+                                    document.getElementById("stud_total").innerHTML = `Your Marks: ${<%= stud_total %>} `;
+                                    document.getElementById("percent").innerHTML = `Percentage: ${<%= stud_total*100/course_total %>}% `;
                                 </script>
+                            <% } %>
+
+                                <% if(ta_perms && ta_perms.assignment) {%>
+                                    <a href="/instructor/create_assignment/<%= course.coursecode %>">Create Assignment</a>
+                                <% } %>
                                 <%- include("../partials/foot.ejs") %>
                 </body>

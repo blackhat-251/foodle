@@ -186,10 +186,14 @@ router.get("/download/:id", async (req, res) => {
 });
 
 router.get("/download_all/:code", async (req, res) => {
-  if (
-    req.user.role != "instructor" ||
-    !req.user.assignments.includes(req.params.code)
-  ) {
+  
+  const ass = await Assign.findOne({ assigncode: req.params.code });
+
+  if(req.user.role == "student"){
+    if(!req.user.ta_courses.includes(ass.coursecode)){
+      return res.send("unauthorised access");
+    }
+  }else if(!req.user.assignments.includes(req.params.code)){
     return res.send("unauthorised access");
   }
   const files_data = await FileData.find({ assigncode: req.params.code });
@@ -283,9 +287,12 @@ router.post("/upload/:code", async (req, res) => {
 });
 
 router.post("/uploadcsv/:code", async (req, res) => {
-  if (req.user.role == "student") {
+  const ass = await Assign.findOne({ assigncode: req.params.code });
+
+  if (req.user.role == "student" && !req.user.ta_courses.includes(ass.coursecode)) {
     return res.send("unauthorized access");
   }
+
   const file = req.files.file;
   var file_lines = file.data.toString().split("\n");
   for (let i = 1; i < file_lines.length - 1; i++) {
@@ -305,7 +312,6 @@ router.post("/uploadcsv/:code", async (req, res) => {
   console.log(file_lines);
   console.log(file.data.toString());
   console.log(file);
-  const ass = await Assign.findOne({ assigncode: req.params.code });
   return res.redirect(`/instructor/assignments/${ass.coursecode}`);
 });
 

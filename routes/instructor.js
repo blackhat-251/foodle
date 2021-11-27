@@ -33,6 +33,12 @@ router.get("/profile", async (req, res) => {
 });
 
 router.all("/create_assignment/:code", async (req, res) => {
+
+  // check if a student accessing this route is a TA
+  if(req.user.role == "student" && (!req.user.ta_courses.includes(req.params.code))){
+    return res.send("Unauthorised access");
+  }
+
   if (req.method == "GET") {
     return res.render("instructor/create_assgn", {
       user: req.user,
@@ -62,7 +68,7 @@ router.all("/create_assignment/:code", async (req, res) => {
     console.log(error);
     return res.send("Some error occured, please try again.");
   }
-  res.redirect("/instructor/courses");
+  res.redirect("back");
 });
 
 router.all("/create_course", async (req, res) => {
@@ -145,12 +151,18 @@ router.get("/announcements/:code", async (req, res) => {
 });
 
 router.all("/create_announcement/:code", async (req, res) => {
+  // check if a student accessing this route is a TA
+  if(req.user.role == "student" && (!req.user.ta_courses.includes(req.params.code))){
+    return res.send("Unauthorised access");
+  }
+
   if (req.method === "GET") {
     return res.render("instructor/create_announcement", {
       user: req.user,
       coursecode: req.params.code,
     });
   }
+
   var course = await Course.findOne({ coursecode: req.params.code });
   course.announcements.push({
     title: req.body.title,
@@ -159,7 +171,7 @@ router.all("/create_announcement/:code", async (req, res) => {
   });
   await course.save();
 
-  return res.redirect(`/instructor/announcements/${req.params.code}`);
+  return res.redirect(`/${req.user.role}/announcements/${req.params.code}`);
 });
 
 router.get("/assignment", async (req, res) => {
@@ -180,12 +192,24 @@ router.get("/assignment", async (req, res) => {
 });
 
 router.get("/view_submission/:code", async (req, res) => {
-  if (!req.user.assignments.includes(req.params.code)) {
-    return res.send("User Not Authorized");
+
+  const assignment = await Assign.findOne({ assigncode: req.params.code });
+
+  // check if a student accessing this route is a TA
+  if(req.user.role == "student"){
+    if((!req.user.ta_courses.includes(assignment.coursecode))){
+      return res.send("Unauthorised access");
+    }
+  }else{
+    if (!req.user.assignments.includes(req.params.code)) {
+      return res.send("User Not Authorized");
+    }
   }
+    
+  
+
   const f = await FileData.find({ assigncode: req.params.code });
   //console.log(f);
-  const assignment = await Assign.findOne({ assigncode: req.params.code });
   const course = await Course.findOne({ coursecode: assignment.coursecode })
   //console.log(course)
   var marks=[];
@@ -233,8 +257,14 @@ router.get("/view_grades/:coursecode", async (req, res) => {
 
 router.post("/feedback/:id", async (req, res) => {
   const id = req.params.id;
-  const feedback = req.body.feedback;
   const f = await FileData.findOne({ _id: id });
+  const assign = await Assign.findOne({'assigncode':f.assigncode});  
+
+  if(req.user.role == "student" && (!req.user.ta_courses.includes(assign.coursecode))){
+    return res.send("Unauthorised access");
+  }
+  
+  const feedback = req.body.feedback;
   f.feedback = feedback;
   f.grade = req.body.grade;
   await f.save();
@@ -319,8 +349,14 @@ router.all("/assignta/:coursecode", async (req, res) => {
     const assignment = req.body.assignment ? true : false
     
     // make sure the username is valid
-    if(!(await User.findOne({'username':username}))){
+    const user = (await User.findOne({'username':username}));
+    if(!user){
       return res.send("Invalid username")
+    }
+
+    // make sure we can't add an instructor as a TA because it creates annoying edge cases which need fixing
+    if(user.role == "instructor"){
+      return res.send(`The user ${user.username} is an instructor, you can't add an instructor as a TA.`)
     }
 
     // remove the old ta permissions to avoid duplication
@@ -333,7 +369,13 @@ router.all("/assignta/:coursecode", async (req, res) => {
       assignment: assignment
     })
     await course.save()
-    console.log(course)
+    
+    if(!user.ta_courses.includes(req.params.coursecode)){
+      user.ta_courses.push(req.params.coursecode);
+    }
+
+    await user.save();
+
     return res.redirect('back')
   }
 })

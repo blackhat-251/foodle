@@ -37,10 +37,17 @@ async function jwt_verify(req, res, next) {
     if (req.path.includes("/student") && req.user.role === "instructor") {
       return res.send("Unauthorized access");
     }
-    if (req.path.includes("/instructor") && req.user.role === "student") {
-      return res.send("Unauthorized access");
+
+    if (req.path.includes("/instructor")) {
+      // giving access to some routes as a student for the TAs
+      if(!(req.path.includes("/instructor/create_announcement/") || req.path.includes("/instructor/view_submission/") || req.path.includes("/instructor/create_assignment/") || req.path.includes("/instructor/feedback/"))){
+        if(req.user.role === "student"){
+          return res.send("Unauthorized access");
+        }
+      }
     }
   }
+
   return next();
 }
 
