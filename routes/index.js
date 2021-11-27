@@ -78,7 +78,7 @@ router.all("/register", async (req, res) => {
     const name = req.body.name;
     const role = req.body.role;
     if (!username || typeof username !== "string") {
-      return res.render("register", { message: { error: "Empty username" } });
+      return res.render("reg", { message: { error: "Empty username" } });
     }
     try {
       var user = new User();
@@ -91,12 +91,12 @@ router.all("/register", async (req, res) => {
         if (err) {
           console.log(err);
           if (err.code === 11000) {
-            return res.render("/register", {
+            return res.render("reg", {
               message: { error: "Username already exists" },
             });
           }
         } else {
-          return res.render("/login", {
+          return res.render("login", {
             message: { success: "User created successfully" },
           });
         }
