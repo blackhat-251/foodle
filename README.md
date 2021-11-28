@@ -39,6 +39,8 @@ Students are shown their progress in each assignment and course totals in a tabl
 <img src="images/grades.jpg" alt="drawing" width="600"/>  
 
 ## Command Line Interface
+We have also implemented a CLI which you can use to list your courses, enroll in courses, submit assignments, download submissions, etc. You can also save your credentials so you wont have to login repeatedly.   
+<img src="images/cli.jpeg" alt="drawing" width="500"/>  
 
 
 ## Chats
