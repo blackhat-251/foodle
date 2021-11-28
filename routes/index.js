@@ -6,7 +6,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const fs = require('fs');
 const asynci = require("async");
+const async = require("async");
 const FileChunk = require("../models/file_chunk");
 const uri = process.env.uri;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -16,6 +18,10 @@ const Message = require("../models/message");
 const Course = require("../models/course");
 const sendmail = require("../services/mailer");
 const math = require("mathjs");
+const { exec, spawn } = require('child_process');
+const { SSL_OP_EPHEMERAL_RSA } = require("constants");
+
+
 
 mongoose.connect(uri);
 
@@ -137,27 +143,27 @@ router.post("/update_password", async (req, res) => {
 });
 */
 
-router.all("/update_password/:pwdChangeToken", async (req,res)=>{
-  if(req.params.pwdChangeToken != req.user.pwdChangeToken){
+router.all("/update_password/:pwdChangeToken", async (req, res) => {
+  if (req.params.pwdChangeToken != req.user.pwdChangeToken) {
     return res.send("Invalid link to change password");
   }
 
-  if(req.method == "GET"){
-    return res.render("update_password",{'pwdChangeToken':req.params.pwdChangeToken});
-  }else{
+  if (req.method == "GET") {
+    return res.render("update_password", { 'pwdChangeToken': req.params.pwdChangeToken });
+  } else {
     const password = await bcrypt.hash(req.body.new_pwd, 10);
     req.user.password = password;
     req.user.pwdChangeToken = "";
 
     await req.user.save();
-    return res.render("login",{'message':{'error':'','success':'Password changed successfully, please login again'}});
+    return res.render("login", { 'message': { 'error': '', 'success': 'Password changed successfully, please login again' } });
   }
-  
+
 })
 
 router.get("/update_password", async (req, res) => {
   const pwdChangeToken = math.randomInt(1e20).toString(36);
-  
+
   req.user.pwdChangeToken = pwdChangeToken;
   await req.user.save();
 
@@ -198,7 +204,7 @@ router.get("/download_all/:code", async (req, res) => {
   }
   const files_data = await FileData.find({ assigncode: req.params.code });
   const assign = await Assign.findOne({ assigncode: req.params.code })
-  cb = function () {};
+  cb = function () { };
   res.header("Content-Type", "application/zip");
   res.header(
     "Content-Disposition",
@@ -286,13 +292,100 @@ router.post("/upload/:code", async (req, res) => {
   return res.redirect(`back`);
 });
 
-router.post("/autograde/:code", async(req, res)=>{
+router.post("/autograde/:code", async (req, res) => {
   if (req.user.role == "student") {
     return res.send("unauthorized access");
   }
   const file = req.files.file;
-  
+  const type = req.body.lang;
+  var cmd
+  var run
+  var submissions = await FileData.find({ assigncode: req.params.code })
+  if (type == "C++") {
+    fs.writeFile("cpp.cpp", file.data.toString(), (err) => {
+      if (err)
+        return connsole.log(err)
+      console.log("cpp.cpp created")
+    })
+    cmd = spawn('g++', ['cpp.cpp', '-o', 'mycppout'], { timeout: 5000, env: {}, args: ["", ""] })
 
+    //run = spawn('./myout',[''],{timeout:5000,env:{},args:["",""]})
+  }
+  else if (type == "python") {
+    await fs.writeFile("py.py", file.data.toString(), (err) => {
+      if (err)
+        return connsole.log(err)
+      console.log("py.py created")
+    })
+    for (var i = 0; i < submissions.length; i++) {
+      var file_chunk = await FileChunk.findOne({ id: submissions[i]._id })
+      await fs.writeFile("student.py", Buffer.from(file_chunk.content, "base64").toString(), (err) => {
+        if (err)
+          return connsole.log(err)
+        console.log("student.py created")
+      })
+      var mymarks = ""
+      await fs.writeFile("temp.txt","", (err) => {
+        if (err)
+          return connsole.log(err)
+        console.log("temp created")
+      })
+      run = await exec('python3 py.py student.py', { timeout: parseInt(req.body.time) * 1000, env: {} },async (err, stdout, stderr) => {
+        console.log(err)
+        console.log(stderr)
+        console.log(stdout.trim())
+        console.log(!isNaN(stdout.trim()))
+        console.log(parseInt(stdout.trim()))
+        if (!isNaN(stdout.trim())) {
+          mymarks = stdout.trim()
+          console.log(mymarks)
+          //submissions[i].grade = mymarks
+          //console.log(submissions[i])
+          await fs.writeFile("temp.txt",stdout.trim().toString(), (err) => {
+            if (err)
+              console.log(err)
+            console.log("temp created")
+          })
+        }
+      })
+
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+      await delay(2000)
+
+      console.log(await fs.readFileSync("./temp.txt", "utf8").toString())
+      console.log("feasfeefaa")
+      console.log(mymarks)
+
+      submissions[i].grade = await fs.readFileSync("./temp.txt", "utf8").toString()
+      await submissions[i].save()
+      
+      await fs.unlink("student.py", (err) => {
+        if (err) console.log(err)
+        console.log("student.py deleted")
+      })
+      await fs.unlink("temp.txt", (err) => {
+        if (err) console.log(err)
+        console.log("temp deleted")
+      })
+    }
+  }
+
+
+
+  fs.unlink("py.py", (err) => {
+    if (err) console.log(err)
+    console.log("py.py deleted")
+  })
+
+  fs.unlink("cpp.cpp", (err) => {
+    if (err) console.log(err)
+    console.log("cpp.cpp deleted")
+  })
+  fs.unlink("mycppout", (err) => {
+    if (err) console.log(err)
+    console.log("mycppout deleted")
+  })
+  return res.send('autograde successful')
 })
 router.post("/uploadcsv/:code", async (req, res) => {
   const ass = await Assign.findOne({ assigncode: req.params.code });
@@ -324,19 +417,21 @@ router.post("/uploadcsv/:code", async (req, res) => {
 });
 
 // start of the chat routes
-router.get("/chat/:username", async (req,res) =>{
-  const chatWith = await User.findOne({'username':req.params.username});
+router.get("/chat/:username", async (req, res) => {
+  const chatWith = await User.findOne({ 'username': req.params.username });
 
-  if(!chatWith){
+  if (!chatWith) {
     return res.send("No such user exists with the provided username.");
   }
 
-  const messages = await Message.find({$or:[
-    {$and:[{'sender':req.user.username},{'receiver':req.params.username},{'isGroupMsg':false}]},
-    {$and:[{'sender':req.params.username},{'receiver':req.user.username},{'isGroupMsg':false}]},
-  ]})
+  const messages = await Message.find({
+    $or: [
+      { $and: [{ 'sender': req.user.username }, { 'receiver': req.params.username }, { 'isGroupMsg': false }] },
+      { $and: [{ 'sender': req.params.username }, { 'receiver': req.user.username }, { 'isGroupMsg': false }] },
+    ]
+  })
 
-  return res.render("chat",{'msgs':messages, 'chatWith':chatWith, 'user':req.user})
+  return res.render("chat", { 'msgs': messages, 'chatWith': chatWith, 'user': req.user })
 })
 
 router.post("/chat/sendmsg/:username", async (req, res) => {
@@ -347,11 +442,11 @@ router.post("/chat/sendmsg/:username", async (req, res) => {
   }
 
   const response = await Message.create({
-    content : req.body.content,
-    isGroupMsg : false,
-    sender : req.user.username,
-    receiver : chatWith.username,
-    time : new Date().toLocaleString()
+    content: req.body.content,
+    isGroupMsg: false,
+    sender: req.user.username,
+    receiver: chatWith.username,
+    time: new Date().toLocaleString()
   });
 
   console.log("Message sent", response);
@@ -380,71 +475,73 @@ router.get("/chat/noofmsgs/:username", async (req, res) => {
 // end of the chat routes
 
 // start of the forum routes
-router.get("/forum/:coursecode", async (req,res) =>{
-  if(!req.user.courses.includes(req.params.coursecode)){
+router.get("/forum/:coursecode", async (req, res) => {
+  if (!req.user.courses.includes(req.params.coursecode)) {
     return res.send("You are not part of that course");
   }
 
-  const course = await Course.findOne({'coursecode':req.params.coursecode});
+  const course = await Course.findOne({ 'coursecode': req.params.coursecode });
 
-  if(!course){
+  if (!course) {
     return res.send("Course doesn't exist");
   }
 
-  if(course.forumDisabled && req.user.username != course.creator){
+  if (course.forumDisabled && req.user.username != course.creator) {
     return res.send("The forum is currently disabled");
   }
 
-  const messages = await Message.find({$and:[
-    {'isGroupMsg':true},{'receiver':course.coursecode}
-  ]})
+  const messages = await Message.find({
+    $and: [
+      { 'isGroupMsg': true }, { 'receiver': course.coursecode }
+    ]
+  })
 
-  return res.render("forum",{'msgs':messages, 'course':course, 'user':req.user})
+  return res.render("forum", { 'msgs': messages, 'course': course, 'user': req.user })
 })
 
-router.post("/forum/sendmsg/:coursecode", async (req, res)=>{
-  if(!req.user.courses.includes(req.params.coursecode)){
+router.post("/forum/sendmsg/:coursecode", async (req, res) => {
+  if (!req.user.courses.includes(req.params.coursecode)) {
     return res.send("You are not part of that course");
   }
-  
-  const course = await Course.findOne({'coursecode':req.params.coursecode});
 
-  if(!course){
+  const course = await Course.findOne({ 'coursecode': req.params.coursecode });
+
+  if (!course) {
     return res.send("Course doesn't exist");
   }
 
-  if(course.forumDisabled && req.user.username != course.creator){
+  if (course.forumDisabled && req.user.username != course.creator) {
     return res.send("The forum is currently disabled");
   }
 
   const response = await Message.create({
-    content : req.body.content,
-    isGroupMsg : true,
-    sender : req.user.username,
-    receiver : course.coursecode,
-    time : new Date().toLocaleString()
+    content: req.body.content,
+    isGroupMsg: true,
+    sender: req.user.username,
+    receiver: course.coursecode,
+    time: new Date().toLocaleString()
   });
 
   return res.send("OK")
 })
 
-router.post("/forum/getmsg/:coursecode", async (req,res)=>{
-  if(!req.user.courses.includes(req.params.coursecode)){
+router.post("/forum/getmsg/:coursecode", async (req, res) => {
+  if (!req.user.courses.includes(req.params.coursecode)) {
     return res.send("You are not part of that course");
   }
 
   const n = parseInt(req.body.n);
-  const msgs = await Message.find({$and:[{'isGroupMsg':true},{'receiver':req.params.coursecode}]}).sort({'time':-1}).limit(n);
+  const msgs = await Message.find({ $and: [{ 'isGroupMsg': true }, { 'receiver': req.params.coursecode }] }).sort({ 'time': -1 }).limit(n);
 
   return res.json(msgs);
 })
 
-router.get("/forum/noofmsgs/:coursecode", async (req,res)=>{
-  if(!req.user.courses.includes(req.params.coursecode)){
+router.get("/forum/noofmsgs/:coursecode", async (req, res) => {
+  if (!req.user.courses.includes(req.params.coursecode)) {
     return res.send("You are not part of that course");
   }
   // sends the number of messages sent by the sender
-  const number = await Message.countDocuments({$and:[{'isGroupMsg':true},{'receiver':req.params.coursecode},{'sender':{$ne:req.user.username}}]});
+  const number = await Message.countDocuments({ $and: [{ 'isGroupMsg': true }, { 'receiver': req.params.coursecode }, { 'sender': { $ne: req.user.username } }] });
   return res.send(`${number}`);
 })
 

@@ -33,7 +33,7 @@
         <% course_total += assignment.weightage %> 
         <% files.forEach(function(file) {%>
             <% if (file.assigncode==assignment.assigncode){ %>
-                <% if(file.grade){ %> 
+                <% if(!isNaN(file.grade)){ %> 
                 <td><%= file.grade %> </td>
                 <% stud_total += file.grade/100*assignment.weightage %>
                 <% } %> 

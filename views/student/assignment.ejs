@@ -70,9 +70,9 @@
                                                 </br>
                                                 Instructor: <%= assignment.author%>
                                                     </br>
-                                                    Assignment CreatedAt: <%= assignment.createdAt%>
+                                                    Assignment CreatedAt: <%= assignment.createdAt.toLocaleString() %>
                                                         </br>
-                                                        Due Deadline: <%= assignment.deadline%>
+                                                        Due Deadline: <%= assignment.deadline.toLocaleString() %>
                                                             </br>
                                                             Weightage(in %) = <%= assignment.weightage %>
 
@@ -133,7 +133,7 @@
                                                                                     </li>
                                                                                     <li>
                                                                                         grade:
-                                                                                        <% if(file.grade) { %>
+                                                                                        <% if(!isNaN(file.grade)) { %>
                                                                                             <%= file.grade %>
                                                                                             <% stud_total= stud_total + file.grade*assignment.weightage/100 %>
 
