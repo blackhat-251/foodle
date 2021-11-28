@@ -24,10 +24,27 @@ Instructors can create new assignments within courses and view all submissions t
 <img src="images/submission.jpg" alt="drawing" width="300"/>   
 The instructors are also shown a To-Do list of all submissions left to grade while students are shown lists of assignments left to submit. 
 
-## Grades 
+## Grading
 Instructor can grade each student manually or can upload grades and feedback in a CSV file downloaded with submissions.  
 <img src="images/csv.jpg" alt="drawing" width="500"/>    
-Instructors can also submit an autograding Python script which should output a grade on reading student's submission file as a command line argument.
+Instructors can also submit an autograding Python script which should output a grade on reading student's submission file as a command line argument.   
+
+## Aggregates
+The instructor is shown the mean, variance and histogram of marks of each assignment seperately. He/She is also shown the statistics of class averages of all assignments in a single graph.   
+<p float="left">
+  <img src="images/graph1.jpg" height="250" />
+  <img src="images/graph2.jpg" height="250" /> 
+</p>
+Students are shown their progress in each assignment and course totals in a table. They are also informed if they are above or below the class average.</br>    
+<img src="images/grades.jpg" alt="drawing" width="600"/>  
+
+## Command Line Interface
+
+
+## Chats
+Instructors and Students can also DM each other privately.   
+<img src="images/chat.jpg" alt="drawing" width="800"/>  
+
 
 
 
