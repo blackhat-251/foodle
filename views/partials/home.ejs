@@ -27,13 +27,13 @@
         <!-- Right -->
         <ul class="navbar-nav ml-auto">
           <% if(user.role=="student"){ %> 
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown" style="cursor: pointer;">
             <a class="nav-link dropdown-toggle waves-effect" data-toggle="dropdown" aria-haspopup="true"
               aria-expanded="true">
-              Enroll
+              Enroll Course
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item">
+              <a class="dropdown-item"> 
                 <form class="form-inline" action="/student/enroll_course" method="POST">
                   <input class="form-control mr-sm-2" type="text" placeholder="XXX" name="coursecode">
                   <button class="btn btn-outline-success my-2" type="submit">Enroll</button>
@@ -42,7 +42,7 @@
             </div>
           </li>
           <% } %> 
-          <li class="nav-item dropdown">
+          <li class="nav-item dropdown" style="cursor: pointer;">
             <a class="nav-link dropdown-toggle waves-effect" id="navbarDropdownMenuLink3" data-toggle="dropdown"
               aria-haspopup="true" aria-expanded="true">
               <%= user.name %>

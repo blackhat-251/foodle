@@ -282,6 +282,14 @@ router.post("/upload/:code", async (req, res) => {
   return res.redirect(`back`);
 });
 
+router.post("/autograde/:code", async(req, res)=>{
+  if (req.user.role == "student") {
+    return res.send("unauthorized access");
+  }
+  const file = req.files.file;
+  
+
+})
 router.post("/uploadcsv/:code", async (req, res) => {
   if (req.user.role == "student") {
     return res.send("unauthorized access");

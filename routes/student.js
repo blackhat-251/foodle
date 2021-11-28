@@ -100,7 +100,7 @@ router.get("/courses", async (req, res) => {
     return req.user.courses.includes(ass.coursecode);
   });
   var completed_courses = await get_completion(filtered_courses, req);
-  console.log(completed_courses);
+  //console.log(completed_courses);
   return res.render("student/dashboard", {
     user: req.user,
     courses: completed_courses,
