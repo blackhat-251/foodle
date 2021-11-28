@@ -48,12 +48,12 @@ router.post("/enroll_course", async (req, res) => {
   const course = await Course.findOne({ coursecode: course_code });
   console.log(course);
   if (!course) {
-    req.flash("error", "No such Course Exists");
-    return res.redirect("back");
+    //req.flash("error", "No such Course Exists");
+    return res.send("No Such Course");
   }
   if (req.user.courses.includes(course_code)) {
-    req.flash("error", "Already Enrolled");
-    return res.redirect("/student/");
+    //req.flash("error", "Already Enrolled");
+    return res.send("Already Enrolled");
   }
   req.user.courses.push(course_code);
   await req.user.save();
@@ -111,12 +111,12 @@ router.get("/enroll/:coursecode", async (req, res) => {
   const course = await Course.findOne({ coursecode: course_code });
   console.log(course);
   if (!course) {
-    req.flash("error", "No such Course Exists");
-    return res.redirect("/student/enroll_course");
+    //req.flash("error", "No such Course Exists");
+    return res.send("Invalid Course Code");
   }
   if (req.user.courses.includes(course_code)) {
-    req.flash("error", "Already Enrolled");
-    return res.redirect("/student/");
+   // req.flash("error", "Already Enrolled");
+    return res.send("Already enrolled");
   }
   req.user.courses.push(course_code);
   await req.user.save();
