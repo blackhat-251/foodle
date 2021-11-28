@@ -445,6 +445,7 @@ router.post("/autograde/:code", async (req, res) => {
 
   return res.send('autograde successful')
 })
+
 router.post("/uploadcsv/:code", async (req, res) => {
   const ass = await Assign.findOne({ assigncode: req.params.code });
 
@@ -533,8 +534,13 @@ router.get("/chat/noofmsgs/:username", async (req, res) => {
 // end of the chat routes
 
 // start of the forum routes
+function checkForumPerm(user,coursecode){
+  return (user.courses.includes(coursecode)||user.ta_courses.includes(coursecode))
+}
+
+
 router.get("/forum/:coursecode", async (req, res) => {
-  if (!req.user.courses.includes(req.params.coursecode)) {
+  if (!checkForumPerm(req.user,req.params.coursecode)) {
     return res.send("You are not part of that course");
   }
 
@@ -558,7 +564,7 @@ router.get("/forum/:coursecode", async (req, res) => {
 })
 
 router.post("/forum/sendmsg/:coursecode", async (req, res) => {
-  if (!req.user.courses.includes(req.params.coursecode)) {
+  if (!checkForumPerm(req.user,req.params.coursecode)) {
     return res.send("You are not part of that course");
   }
 
@@ -584,7 +590,7 @@ router.post("/forum/sendmsg/:coursecode", async (req, res) => {
 })
 
 router.post("/forum/getmsg/:coursecode", async (req, res) => {
-  if (!req.user.courses.includes(req.params.coursecode)) {
+  if (!checkForumPerm(req.user,req.params.coursecode)) {
     return res.send("You are not part of that course");
   }
 
@@ -595,7 +601,7 @@ router.post("/forum/getmsg/:coursecode", async (req, res) => {
 })
 
 router.get("/forum/noofmsgs/:coursecode", async (req, res) => {
-  if (!req.user.courses.includes(req.params.coursecode)) {
+  if (!checkForumPerm(req.user,req.params.coursecode)) {
     return res.send("You are not part of that course");
   }
   // sends the number of messages sent by the sender
