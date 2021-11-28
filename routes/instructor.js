@@ -265,10 +265,16 @@ router.post("/feedback/:id", async (req, res) => {
   }
   
   const feedback = req.body.feedback;
-  f.feedback = feedback;
-  f.grade = req.body.grade;
+  if(feedback)
+    f.feedback = feedback;
+  const grade = req.body.grade;
+  if(grade)
+    f.grade = req.body.grade;
   await f.save();
-  res.send("feedback recieved");
+  // console.log(req.headers.referer)
+  // res.redirect("back");
+  res.send(`Feedback received </br>
+  <a href=${req.headers.referer}>Go back</a>`)
 });
 
 router.get("/inviteall/:coursecode", async (req, res) => {
