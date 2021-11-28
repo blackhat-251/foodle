@@ -4,19 +4,23 @@
 
     <%- include("../partials/home.ejs") %>
 
-        <body style="padding-top: 4em; background-color:white;">
+        <body style="padding-top: 4em; background-color:white;" class="ml-4">
 <h2>create assignment</h2>
 <form action="/instructor/create_assignment/<%= coursecode %>" method="post">
+    <div class="form-group">
     <label for="title">Title</label>
-    <input type="name" name="title">
+    <input type="name" name="title"></div>
+    <div class="form-group">
     <label for="description">Description</label>
-    <input type="text" name="description">
+    <input type="text" name="description"></div>
+    <div class="form-group">
     <label for="deadline">Deadline</label>
-    <input type="datetime-local" name="deadline">
+    <input type="datetime-local" name="deadline"></div>
+    <div class="from-group">
     <label for="weightage">Weightage(0-100)%</label>
-    <input type="number" name="weightage" min="0" max="100" default="0">
+    <input type="number" name="weightage" min="0" max="100" default="0"></div>
     <!-- <input type="file" name="file"> -->
-    <input type="submit" value="Button">
+    <input type="submit" value="Submit" class="btn btn-primary">
 </form>
 <%- include("../partials/foot.ejs") %>
 
