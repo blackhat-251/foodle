@@ -1,6 +1,9 @@
 # Blackhat foodle
 A dynamic learning environment using Express, MongoDb, NodeJS 
 
+
+Checkout our deployed version of the website at https://blackhat-foodle.herokuapp.com
+
 # Key Features
 
 ## Sign Up and Sign In 
