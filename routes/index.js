@@ -192,14 +192,14 @@ router.get("/download/:id", async (req, res) => {
 });
 
 router.get("/download_all/:code", async (req, res) => {
-  
+
   const ass = await Assign.findOne({ assigncode: req.params.code });
 
-  if(req.user.role == "student"){
-    if(!req.user.ta_courses.includes(ass.coursecode)){
+  if (req.user.role == "student") {
+    if (!req.user.ta_courses.includes(ass.coursecode)) {
       return res.send("unauthorised access");
     }
-  }else if(!req.user.assignments.includes(req.params.code)){
+  } else if (!req.user.assignments.includes(req.params.code)) {
     return res.send("unauthorised access");
   }
   const files_data = await FileData.find({ assigncode: req.params.code });
@@ -297,21 +297,79 @@ router.post("/autograde/:code", async (req, res) => {
     return res.send("unauthorized access");
   }
   const file = req.files.file;
-  const type = req.body.lang;
+  const type = "python";
   var cmd
   var run
   var submissions = await FileData.find({ assigncode: req.params.code })
-  if (type == "C++") {
-    fs.writeFile("cpp.cpp", file.data.toString(), (err) => {
-      if (err)
-        return connsole.log(err)
-      console.log("cpp.cpp created")
-    })
-    cmd = spawn('g++', ['cpp.cpp', '-o', 'mycppout'], { timeout: 5000, env: {}, args: ["", ""] })
+  // if (type == "C++") {
+  //   fs.writeFile("cpp.cpp", file.data.toString(), (err) => {
+  //     if (err)
+  //       return connsole.log(err)
+  //     console.log("cpp.cpp created")
+  //   })
+  //   //cmd = spawn('g++', ['cpp.cpp', '-o', 'mycppout'], { timeout: 5000, env: {}, args: ["", ""] })
+  //   cmd = await exec('g++ cpp.cpp -o mycppout', { timeout: 5000, env: {} }, async (err, stdout, stderr) => {
+  //     console.log(err)
+  //     console.log(stdout)
+  //     console.log(stderr)
+  //   })
+  //   const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+  //   await delay(2000)
+  //   for (var i = 0; i < submissions.length; i++) {
+  //     var file_chunk = await FileChunk.findOne({ id: submissions[i]._id })
+  //     await fs.writeFile("student", Buffer.from(file_chunk.content, "base64").toString(), (err) => {
+  //       if (err)
+  //         return connsole.log(err)
+  //       console.log("student created")
+  //     })
+  //     var mymarks = ""
+  //     await fs.writeFile("temp.txt", "", (err) => {
+  //       if (err)
+  //         return connsole.log(err)
+  //       console.log("temp created")
+  //     })
+  //     run = await exec('./mycppout student', { timeout: parseInt(req.body.time) * 1000, env: {} }, async (err, stdout, stderr) => {
+  //       console.log(err)
+  //       console.log(stderr)
+  //       console.log(stdout.trim())
+  //       console.log(!isNaN(stdout.trim()))
+  //       console.log(parseInt(stdout.trim()))
+  //       if (!isNaN(stdout.trim())) {
+  //         mymarks = stdout.trim()
+  //         console.log(mymarks)
+  //         //submissions[i].grade = mymarks
+  //         //console.log(submissions[i])
+  //         await fs.writeFile("temp.txt", stdout.trim().toString(), (err) => {
+  //           if (err)
+  //             console.log(err)
+  //           console.log("temp created")
+  //         })
+  //       }
+  //     })
 
-    //run = spawn('./myout',[''],{timeout:5000,env:{},args:["",""]})
-  }
-  else if (type == "python") {
+  //     const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+  //     await delay(2000)
+
+  //     console.log(await fs.readFileSync("./temp.txt", "utf8").toString())
+  //     console.log("feasfeefaa")
+  //     console.log(mymarks)
+
+  //     submissions[i].grade = await fs.readFileSync("./temp.txt", "utf8").toString()
+  //     await submissions[i].save()
+
+  //     await fs.unlink("student", (err) => {
+  //       if (err) console.log(err)
+  //       console.log("student deleted")
+  //     })
+  //     await fs.unlink("temp.txt", (err) => {
+  //       if (err) console.log(err)
+  //       console.log("temp deleted")
+  //     })
+  //   }
+
+  //   //run = spawn('./myout',[''],{timeout:5000,env:{},args:["",""]})
+  // }
+    if (type == "python") {
     await fs.writeFile("py.py", file.data.toString(), (err) => {
       if (err)
         return connsole.log(err)
@@ -325,12 +383,12 @@ router.post("/autograde/:code", async (req, res) => {
         console.log("student.py created")
       })
       var mymarks = ""
-      await fs.writeFile("temp.txt","", (err) => {
+      await fs.writeFile("temp.txt", "", (err) => {
         if (err)
           return connsole.log(err)
         console.log("temp created")
       })
-      run = await exec('python3 py.py student.py', { timeout: parseInt(req.body.time) * 1000, env: {} },async (err, stdout, stderr) => {
+      run = await exec('python3 py.py student.py', { timeout: parseInt(req.body.time) * 1000, env: {} }, async (err, stdout, stderr) => {
         console.log(err)
         console.log(stderr)
         console.log(stdout.trim())
@@ -341,7 +399,7 @@ router.post("/autograde/:code", async (req, res) => {
           console.log(mymarks)
           //submissions[i].grade = mymarks
           //console.log(submissions[i])
-          await fs.writeFile("temp.txt",stdout.trim().toString(), (err) => {
+          await fs.writeFile("temp.txt", stdout.trim().toString(), (err) => {
             if (err)
               console.log(err)
             console.log("temp created")
@@ -358,7 +416,7 @@ router.post("/autograde/:code", async (req, res) => {
 
       submissions[i].grade = await fs.readFileSync("./temp.txt", "utf8").toString()
       await submissions[i].save()
-      
+
       await fs.unlink("student.py", (err) => {
         if (err) console.log(err)
         console.log("student.py deleted")
@@ -369,22 +427,22 @@ router.post("/autograde/:code", async (req, res) => {
       })
     }
   }
-
-
+ 
 
   fs.unlink("py.py", (err) => {
     if (err) console.log(err)
     console.log("py.py deleted")
   })
 
-  fs.unlink("cpp.cpp", (err) => {
-    if (err) console.log(err)
-    console.log("cpp.cpp deleted")
-  })
-  fs.unlink("mycppout", (err) => {
-    if (err) console.log(err)
-    console.log("mycppout deleted")
-  })
+  // fs.unlink("cpp.cpp", (err) => {
+  //   if (err) console.log(err)
+  //   console.log("cpp.cpp deleted")
+  // })
+  // fs.unlink("mycppout", (err) => {
+  //   if (err) console.log(err)
+  //   console.log("mycppout deleted")
+  // })
+
   return res.send('autograde successful')
 })
 router.post("/uploadcsv/:code", async (req, res) => {
