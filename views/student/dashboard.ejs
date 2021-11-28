@@ -14,8 +14,12 @@
                                 <div class="card mb-3">
                                     <div class="card-header">
                                         <div class="card-title">
-                                            Title = <%= course.course.name %>
-                                                </br>
+                                            <div class="row justify-content-between">
+                                                <div class="col-auto"><h3><%= course.course.name %></h3></div>
+                                                <% if(user.ta_courses.includes(course.course.coursecode)) { %>
+                                                    <div class="col-auto"><h4>TA</h4></div>
+                                                <% } %>
+                                            </div>
                                                 Description = <%= course.course.description %>
                                                     </br>
                                                     Code = <%= course.course.coursecode %>
