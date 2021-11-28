@@ -78,7 +78,7 @@
                                             <% arr.push(file.grade) %>
                                                     </br>
                                                     The assignment was submitted: <%=
-                                                        get_time(assignment.deadline,file.updatedAt) %>
+                                                        get_time(assignment.deadline,file.createdAt) %>
                                                         <form action="/instructor/feedback/<%= file._id %>"
                                                             method="post">
                                                             <label for="title">Feedback</label>
