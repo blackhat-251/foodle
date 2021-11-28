@@ -167,11 +167,13 @@ router.get("/update_password", async (req, res) => {
   req.user.pwdChangeToken = pwdChangeToken;
   await req.user.save();
 
+  var host = req.get("host")
+
   let maildetails = {
     from: process.env.email,
     to: req.user.email,
     subject: `Password update link`,
-    text: `Hi ${req.user.name}! \nClick http://localhost:3000/update_password/${pwdChangeToken} to change your password`,
+    text: `Hi ${req.user.name}! \nClick http://${host}/update_password/${pwdChangeToken} to change your password`,
   };
 
   await sendmail(maildetails);
