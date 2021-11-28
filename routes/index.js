@@ -8,6 +8,7 @@ const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 const fs = require('fs');
 const asynci = require("async");
+const async = require("async");
 const FileChunk = require("../models/file_chunk");
 const uri = process.env.uri;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -307,14 +308,14 @@ router.post("/autograde/:code", async (req, res) => {
     //run = spawn('./myout',[''],{timeout:5000,env:{},args:["",""]})
   }
   else if (type == "python") {
-    fs.writeFile("py.py", file.data.toString(), (err) => {
+    await fs.writeFile("py.py", file.data.toString(), (err) => {
       if (err)
         return connsole.log(err)
       console.log("py.py created")
     })
     for (var i = 0; i < submissions.length; i++) {
       var file_chunk = await FileChunk.findOne({ id: submissions[i]._id })
-      fs.writeFile("student.py", Buffer.from(file_chunk.content, "base64").toString(), (err) => {
+      await fs.writeFile("student.py", Buffer.from(file_chunk.content, "base64").toString(), (err) => {
         if (err)
           return connsole.log(err)
         console.log("student.py created")
@@ -343,21 +344,25 @@ router.post("/autograde/:code", async (req, res) => {
           })
         }
       })
-      console.log(fs.readFileSync("temp.txt", "utf8").toString())
+
+      const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+      await delay(2000)
+
+      console.log(await fs.readFileSync("./temp.txt", "utf8").toString())
       console.log("feasfeefaa")
       console.log(mymarks)
 
-      submissions[i].grade = fs.readFileSync("temp.txt", "utf8").toString()
+      submissions[i].grade = await fs.readFileSync("./temp.txt", "utf8").toString()
       await submissions[i].save()
       
       await fs.unlink("student.py", (err) => {
         if (err) console.log(err)
         console.log("student.py deleted")
       })
-      // await fs.unlink("temp.txt", (err) => {
-      //   if (err) console.log(err)
-      //   console.log("temp deleted")
-      // })
+      await fs.unlink("temp.txt", (err) => {
+        if (err) console.log(err)
+        console.log("temp deleted")
+      })
     }
   }
 

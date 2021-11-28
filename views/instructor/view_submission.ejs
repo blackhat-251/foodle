@@ -74,7 +74,7 @@
                                         </a>
                                         </br>
                                         Last given feedback: <%= file.feedback %></br>
-                                            Last given grade: <%= file.grade %> </br>at time <%= file.updatedAt %>
+                                            Last given grade: <%= file.grade %> </br>at time <%= file.updatedAt.toLocaleString() %>
                                             <% arr.push(file.grade) %>
                                                     </br>
                                                     The assignment was submitted: <%=

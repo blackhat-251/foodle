@@ -17,7 +17,7 @@
                                         </br>
                                         instructor: <%= assignment.author%>
                                             </br>
-                                            Assignment CreatedAt: <%= assignment.createdAt%>
+                                            Assignment CreatedAt: <%= assignment.createdAt.toLocaleString() %>
                                                 </br>
                                                 Due Deadline: <%= assignment.deadline%>
                                                     <form action="/upload/<%= assignment.assigncode %>" method="post"

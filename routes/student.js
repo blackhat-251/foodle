@@ -137,7 +137,7 @@ router.get("/grade/:coursecode", async(req, res) => {
     var num=0;
     var sum=0;
     f.forEach((file)=>{
-      if(file.grade){
+      if(!isNaN(file.grade)){
         sum+=file.grade;
         num+=1;
       }

@@ -190,7 +190,7 @@ router.get("/view_submission/:code", async (req, res) => {
   //console.log(course)
   var marks=[];
   f.forEach((file)=>{
-    if(file.grade){
+    if(!isNaN(file.grade)){
       marks.push(file.grade);
     }
   });
@@ -214,7 +214,7 @@ router.get("/view_grades/:coursecode", async (req, res) => {
     var num=0;
     var sum=0;
     f.forEach((file)=>{
-      if(file.grade){
+      if(!isNaN(file.grade)){
         sum+=file.grade;
         num+=1;
       }
