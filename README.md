@@ -40,7 +40,10 @@ Students are shown their progress in each assignment and course totals in a tabl
 
 ## Command Line Interface
 We have also implemented a CLI which you can use to list your courses, enroll in courses, submit assignments, download submissions, etc. You can also save your credentials so you wont have to login repeatedly.   
-<img src="images/cli.jpeg" alt="drawing" width="500"/>  
+<p float="left">
+  <img src="images/cli.jpeg" height="250" />
+  <img src="images/cli2.jpeg" height="300" /> 
+</p>
 
 
 ## Chats
