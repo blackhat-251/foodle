@@ -140,7 +140,9 @@ router.get("/grade/:coursecode", async(req, res) => {
         num+=1;
       }
     });
+    if(num>0){
     class_avg += (sum/num)*assignments[i].weightage/100
+    }
   }
   // class_avg /= assignments.length
   res.render("student/grade", {
