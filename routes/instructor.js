@@ -281,12 +281,14 @@ router.get("/inviteall/:coursecode", async (req, res) => {
   const students = await User.find({ role: "student" });
   const course = await Course.findOne({ coursecode: req.params.coursecode });
 
+  var host = req.get("host")
+
   students.forEach(async (student) => {
     let maildetails = {
       from: process.env.email,
       to: student.email,
       subject: `Invitation link for Course ${course.name} (${course.coursecode})`,
-      text: `Hi ${student.name}! \nClick http://localhost:3000/student/enroll/${req.params.coursecode} to get enrolled into the course `,
+      text: `Hi ${student.name}! \nClick http://${host}/student/enroll/${req.params.coursecode} to get enrolled into the course `,
     };
 
     await sendmail(maildetails);
