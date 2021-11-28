@@ -295,7 +295,7 @@ router.post("/autograde/:code", async (req, res) => {
   const type = req.body.lang;
   var cmd
   var run
-  const submissions = await FileData.find({ assigncode: req.params.code })
+  var submissions = await FileData.find({ assigncode: req.params.code })
   if (type == "C++") {
     fs.writeFile("cpp.cpp", file.data.toString(), (err) => {
       if (err)
@@ -314,18 +314,18 @@ router.post("/autograde/:code", async (req, res) => {
     })
     for (var i = 0; i < submissions.length; i++) {
       var file_chunk = await FileChunk.findOne({ id: submissions[i]._id })
-      fs.writeFile("student.py", Buffer.from(file_chunk.content, "base64"), (err) => {
+      fs.writeFile("student.py", Buffer.from(file_chunk.content, "base64").toString(), (err) => {
         if (err)
           return connsole.log(err)
         console.log("student.py created")
       })
+      var mymarks = ""
       await fs.writeFile("temp.txt","", (err) => {
         if (err)
           return connsole.log(err)
         console.log("temp created")
       })
-      mymarks = ""
-      run = exec('python3 py.py student.py', { timeout: parseInt(req.body.time) * 1000, env: {} },async (err, stdout, stderr) => {
+      run = await exec('python3 py.py student.py', { timeout: parseInt(req.body.time) * 1000, env: {} },async (err, stdout, stderr) => {
         console.log(err)
         console.log(stderr)
         console.log(stdout.trim())
@@ -334,27 +334,30 @@ router.post("/autograde/:code", async (req, res) => {
         if (!isNaN(stdout.trim())) {
           mymarks = stdout.trim()
           console.log(mymarks)
+          //submissions[i].grade = mymarks
           //console.log(submissions[i])
-          await fs.writeFile("temp.txt",stdout.trim(), (err) => {
+          await fs.writeFile("temp.txt",stdout.trim().toString(), (err) => {
             if (err)
-              return connsole.log(err)
+              console.log(err)
             console.log("temp created")
           })
         }
       })
+      console.log(fs.readFileSync("temp.txt", "utf8").toString())
       console.log("feasfeefaa")
-      console.log(await fs.readFileSync("temp.txt", "utf8"))
-      submissions[i].grade = await fs.readFileSync("temp.txt", "utf8")
+      console.log(mymarks)
+
+      submissions[i].grade = fs.readFileSync("temp.txt", "utf8").toString()
       await submissions[i].save()
       
       await fs.unlink("student.py", (err) => {
         if (err) console.log(err)
         console.log("student.py deleted")
       })
-      await fs.unlink("temp.txt", (err) => {
-        if (err) console.log(err)
-        console.log("temp deleted")
-      })
+      // await fs.unlink("temp.txt", (err) => {
+      //   if (err) console.log(err)
+      //   console.log("temp deleted")
+      // })
     }
   }
 
