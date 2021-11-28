@@ -243,7 +243,8 @@ router.get("/view_grades/:coursecode", async (req, res) => {
         num+=1;
       }
     });
-    marks.push(sum/num);
+    if(num==0){marks.push(0);}
+    else{marks.push(sum/num);}
   }
   console.log(marks);
   const course = await Course.findOne({coursecode: req.params.coursecode})

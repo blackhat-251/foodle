@@ -1,6 +1,9 @@
 # Blackhat foodle
 A dynamic learning environment using Express, MongoDb, NodeJS 
 
+
+Checkout our deployed version of the website at https://blackhat-foodle.herokuapp.com
+
 # Key Features
 
 ## Sign Up and Sign In 
@@ -39,6 +42,11 @@ Students are shown their progress in each assignment and course totals in a tabl
 <img src="images/grades.jpg" alt="drawing" width="600"/>  
 
 ## Command Line Interface
+We have also implemented a CLI which you can use to list your courses, enroll in courses, submit assignments, download submissions, etc. You can also save your credentials so you wont have to login repeatedly.   
+<p float="left">
+  <img src="images/cli.jpeg" height="250" />
+  <img src="images/cli2.jpeg" height="300" /> 
+</p>
 
 
 ## Chats

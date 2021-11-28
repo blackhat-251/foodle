@@ -23,7 +23,27 @@
                                                         <!-- <div class="progress" style="width: 60%;">
                                         <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<%=course.completed%>" aria-valuemin="0" aria-valuemax="100" style="width: <%= course.completed%>%"><%=course.completed%>%</div>
                                     </div> -->
-                                                        <a href="/instructor/assignments/<%= course.coursecode %>">View
+                                    <ul class="navbar-nav ml-auto">
+                                    <li class="nav-item dropdown" style="cursor: pointer;">
+                                        <a class="nav-link dropdown-toggle waves-effect" id="navbarDropdownMenuLink3" data-toggle="dropdown"
+                                          aria-haspopup="true" aria-expanded="true">
+                                          <%= course.name %>
+                                        </a>
+                                       
+                                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                          <a class="dropdown-item" href="/instructor/assignments/<%= course.coursecode %>">Assignments</a>
+                                          <a class="dropdown-item" href="/instructor/announcements/<%= course.coursecode %>">Announcements</a>
+                                          <a class="dropdown-item" href="/instructor/enrolled_students/<%= course.coursecode %>">Enrolled Student</a>
+                                          <a class="dropdown-item" href="/instructor/view_grades/<%= course.coursecode %>">Grade Stats</a>
+                                          <a class="dropdown-item" href="/forum/<%= course.coursecode %>">Course Forum</a>
+                                          <a class="dropdown-item" href="/instructor/assignta/<%= course.coursecode %>">Manage TA</a>
+                                         
+                                        </div>
+    
+                            
+                                      </li>
+                                    </ul>
+                                                        <!-- <a href="/instructor/assignments/<%= course.coursecode %>">View
                                                             all assignments</a>
                                                         </br>
                                                         <a href="/instructor/announcements/<%= course.coursecode %>">View
@@ -41,7 +61,7 @@
                                                         </br>
                                                         <a 
                                                             href="/instructor/assignta/<%= course.coursecode %>">Manage TAs</a>
-                                                        </br>
+                                                        </br> -->
                                                         <a
                                                             href="/instructor/inviteall/<%= course.coursecode %>">Invite</a>
                                                         all students
