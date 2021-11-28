@@ -25,7 +25,7 @@
                       
                                 Assignment: <%= assign.title %>
                                 </br>
-                                Class Mean: <%= marks[num]%>
+                                Class Mean: <%= marks[num].toFixed(2) %>
                               </br>
                                
                                 <%num=num+1 %>
@@ -56,8 +56,8 @@
         %>
 
         <script> 
-document.getElementById("mean").innerHTML = `Mean of class averages: ${<%= dev(marks)[0] %>} `;
-document.getElementById("var").innerHTML = `Variance of class averages: ${<%= dev(marks)[1] %>} `;
+document.getElementById("mean").innerHTML = `Mean of class averages: ${<%= dev(marks)[0].toFixed(2) %>} `;
+document.getElementById("var").innerHTML = `Variance of class averages: ${<%= dev(marks)[1].toFixed(2) %>} `;
 
 
 const plot=document.getElementById('test');

@@ -165,10 +165,10 @@
                                 <script>
                                     document.getElementById("ass_count").innerHTML = `Number of Assignments: ${<%= assignments.length %>}`;
                                     document.getElementById("sub_count").innerHTML = `Submitted Count: ${<%= sub %>} `;
-                                    document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub / assignments.length) * 100 %>}%`;
+                                    document.getElementById("completion").innerHTML = `Course Completion: ${<%= (sub / assignments.length* 100).toFixed(2) %>}%`;
                                     document.getElementById("course_total").innerHTML = `Total Marks: ${<%= course_total %>} `;
                                     document.getElementById("stud_total").innerHTML = `Your Marks: ${<%= stud_total %>} `;
-                                    document.getElementById("percent").innerHTML = `Percentage: ${<%= stud_total*100/course_total %>}% `;
+                                    document.getElementById("percent").innerHTML = `Percentage: ${<%= (stud_total*100/course_total).toFixed(2) %>}% `;
                                 </script>
                             <% } %>
 

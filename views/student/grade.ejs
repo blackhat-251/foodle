@@ -45,8 +45,8 @@
       <tr>
           <td></td>
         <td>Course Total: <%= course_total %></td>
-          <td>Student Total: <%= stud_total %> </br>Class Average: <%= class_avg %>  </td>
-          <td>Percentage: <%= stud_total*100/course_total %></td>
+          <td>Student Total: <%= stud_total.toFixed(2) %> </br>Class Average: <%= class_avg.toFixed(2) %>  </td>
+          <td>Percentage: <%= (stud_total*100/course_total).toFixed(2) %></td>
 
       </tr> 
       

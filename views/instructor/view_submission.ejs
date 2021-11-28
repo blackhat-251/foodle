@@ -112,8 +112,8 @@
         %>
 
         <script> 
-document.getElementById("mean").innerHTML = `Mean: ${<%= dev(marks)[0] %>} `;
-document.getElementById("var").innerHTML = `Variance: ${<%= dev(marks)[1] %>} `;
+document.getElementById("mean").innerHTML = `Mean: ${<%= dev(marks)[0].toFixed(2) %>} `;
+document.getElementById("var").innerHTML = `Variance: ${<%= dev(marks)[1].toFixed(2) %>} `;
 
 
 const plot=document.getElementById('test');
