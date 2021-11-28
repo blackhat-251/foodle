@@ -267,14 +267,10 @@ router.post("/feedback/:id", async (req, res) => {
   const feedback = req.body.feedback;
   if(feedback)
     f.feedback = feedback;
-  const grade = req.body.grade;
-  if(grade)
+  if(req.body.grade)
     f.grade = req.body.grade;
   await f.save();
-  // console.log(req.headers.referer)
-  // res.redirect("back");
-  res.send(`Feedback received </br>
-  <a href=${req.headers.referer}>Go back</a>`)
+  res.send(`feedback recieved </br> <a href=${req.headers.referer}>Go Back</a>`);
 });
 
 router.get("/inviteall/:coursecode", async (req, res) => {
